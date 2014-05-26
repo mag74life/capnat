@@ -26,6 +26,7 @@ $app = new Illuminate\Foundation\Application;
 
 $env = $app->detectEnvironment(array(
 
+	'testServer' => array('eserver'),
 	'localAndrew' => array('Compy', 'Lappy'),
 
 ));
