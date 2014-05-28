@@ -11,7 +11,17 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+//Homepage
+Route::get('/', 'HomeController@showIndex');
+
+//Patient
+Route::get('login', 'PatientController@showLogin');
+Route::post('login', 'PatientController@handleLogin');
+Route::any('logout', 'PatientController@handleLogout');
+Route::get('survey', 'PatientController@showSurvey');
+Route::post('survey', 'PatientController@handleSurvey');
+
+//Staff
+Route::get('staff-login', 'StaffController@showLogin');
+Route::post('staff-login', 'StaffController@handleLogin');
+Route::any('staff-logout', 'StaffController@doLogout');

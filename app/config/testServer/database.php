@@ -1,6 +1,6 @@
 <?php
 
-// Configuration overrides for local environment
+// Configuration overrides for testing environment
 // http://laravel.com/docs/configuration#environment-configuration
 
 return array(
@@ -9,7 +9,7 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'eagard.us.to',
+			'host'      => 'localhost',
 			'database'  => 'capnat',
 			'username'  => 'root',
 			'password'  => $_ENV['DB_PASS'],

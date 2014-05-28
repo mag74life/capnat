@@ -38,6 +38,20 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Redirect::guest('login');
 });
 
+Route::filter('patient', function()
+{
+	if (Auth::guest() || Auth::user() && Auth::user()->type != '0') {
+		return Redirect::guest('login');
+	}
+});
+
+Route::filter('staff', function()
+{
+	if (Auth::guest() || Auth::user() && Auth::user()->type != '1') {
+		return Redirect::guest('staff-login');
+	}
+});
+
 
 Route::filter('auth.basic', function()
 {

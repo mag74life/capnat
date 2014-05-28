@@ -80,4 +80,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->email;
 	}
 
+	public function userData()
+	{
+		if ($this->type == '0') {
+			return $this->hasOne('Patient');
+		} else {
+			return $this->hasOne('Staff');
+		}
+	}
+	
 }
