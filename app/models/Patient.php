@@ -6,6 +6,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 class Patient extends Eloquent {
 
 	protected $table = 'patients';
+	protected $fillable = array('name');
 
 	public function user()
 	{
@@ -14,7 +15,7 @@ class Patient extends Eloquent {
 	
 	public function exams()
 	{
-		return $this->hasMany('Exam');
+		return $this->hasMany('Exam')->orderBy('created_at', 'desc');
 	}
 	
 }

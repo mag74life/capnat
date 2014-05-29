@@ -8,6 +8,7 @@
 
 @section('content')
 	<p><a href="{{ URL::to('logout') }}">Log out</a></p>
+	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
 
 	<h1>Survey</h1>
 	

@@ -24,4 +24,7 @@ Route::post('survey', 'PatientController@handleSurvey');
 //Staff
 Route::get('staff-login', 'StaffController@showLogin');
 Route::post('staff-login', 'StaffController@handleLogin');
-Route::any('staff-logout', 'StaffController@doLogout');
+Route::any('staff-logout', 'StaffController@handleLogout');
+Route::get('create-patient', 'StaffController@showCreatePatient');
+Route::post('create-patient', 'StaffController@handleCreatePatient');
+Route::get('view-patients', 'StaffController@showViewPatients');

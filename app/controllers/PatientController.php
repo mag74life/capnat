@@ -5,15 +5,22 @@ class PatientController extends BaseController {
 	public function __construct() {
 		// Only allow guests to access the login page
 		$this->beforeFilter('guest', array(
-			'only' => array('showLogin', 'handleLogin'),
+			'only' => array(
+				'showLogin',
+				'handleLogin'
+			),
 		));
 		
 		// Only allow logged in patients to access the patient survey
 		$this->beforeFilter('patient', array(
-			'only' => array('showSurvey'),
+			'only' => array(
+				'showSurvey',
+				'handleSurvey'
+			),
 		));
 	}
 	
+	// Show patient login
 	public function showLogin() {
 		return View::make('patient-login', array(
 			'title'	=> 'Login',
@@ -54,9 +61,17 @@ class PatientController extends BaseController {
 	
 	// Show patient survey
 	public function showSurvey() {
-		return View::make('patient-survey', array(
-			'title'	=> 'Survey',
-		));
+		$id = Session::get('showResults');
+		if ($id) {
+			return View::make('patient-survey-results', array(
+				'title'			=> 'Survey Results',
+				'surveyScore'	=> Exam::find($id)->survey_score,
+			));
+		} else {
+			return View::make('patient-survey', array(
+				'title'	=> 'Survey',
+			));
+		}
 	}
 	
 	// Handle patient survey
@@ -73,8 +88,14 @@ class PatientController extends BaseController {
 		if ($validator->fails()) {
 			return Redirect::to('survey')->withErrors($validator)->withInput(Input::all());
 		} else {
-			
+			$score = 0;
+			foreach (Input::all() as $input) {
+				$score += $input;
+			}
+			$exam = new Exam(array('survey_score' => $score));
+			$patient = Auth::user()->userData;
+			$patient->exams()->save($exam);
+			return Redirect::to('survey')->with('showResults', $exam->id);
 		}
 	}
-
 }
