@@ -187,5 +187,10 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 
 	),
+	
+	
+	
+	'surveyLength'				=> 20,			// Number of survey questions
+	'assessmentLength'			=> 20,			// Number of assessment questions
 
 );

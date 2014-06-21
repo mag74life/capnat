@@ -25,7 +25,7 @@
 			</tr>
 			@foreach ($exams as $exam)
 				<tr>
-					<td>{{ $exam->survey_score }}</td>
+					<td>{{ $exam->survey_total }}</td>
 					<td>{{ $exam->created_at }}</td>
 				</tr>
 			@endforeach
