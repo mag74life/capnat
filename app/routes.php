@@ -11,17 +11,28 @@
 |
 */
 
-//Homepage
-Route::get('/', 'HomeController@showIndex');
+// Route parameter patterns
+Route::pattern('page', '[0-9]+');
 
-//Patient
+
+// Homepage
+if (Auth::guest()) { // Show login page if user is not logged in
+	$dashboard = 'PatientController@showLogin';
+} else if (Auth::user()->type == '0') { // Show patient dashboard if user is a patient
+	$dashboard = 'PatientController@showDashboard';
+} else { // Show staff dashboard
+	$dashboard = 'StaffController@showDashboard';
+}
+Route::get('/', $dashboard);
+
+// Patient
 Route::get('login', 'PatientController@showLogin');
 Route::post('login', 'PatientController@handleLogin');
 Route::any('logout', 'PatientController@handleLogout');
-Route::get('survey', 'PatientController@showSurvey');
-Route::post('survey', 'PatientController@handleSurvey');
+Route::get('survey/{page?}', 'PatientController@showSurvey');
+Route::post('survey/{page?}', 'PatientController@handleSurvey');
 
-//Staff
+// Staff
 Route::get('staff-login', 'StaffController@showLogin');
 Route::post('staff-login', 'StaffController@handleLogin');
 Route::any('staff-logout', 'StaffController@handleLogout');

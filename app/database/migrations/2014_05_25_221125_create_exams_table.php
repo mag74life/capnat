@@ -25,7 +25,7 @@ class CreateExamsTable extends Migration {
 			for ($i = 0; $i < Config::get('app.assessmentLength'); $i++) {
 				$table->tinyInteger('assessment_q' . $i)->unsigned()->nullable();
 			}
-			$table->tinyInteger('assessment_score')->unsigned()->nullable();
+			$table->tinyInteger('assessment_total')->unsigned()->nullable();
 			$table->timestamps();
 			
 			$table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');

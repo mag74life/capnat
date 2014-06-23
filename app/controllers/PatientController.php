@@ -58,8 +58,29 @@ class PatientController extends BaseController {
 		return Redirect::to('login');
 	}
 	
+	// Show patient dashboard
+	public function showDashboard() {
+		$user = Auth::user();
+		$patient = $user->userData;
+		$name = $patient->name;
+		$exams = $patient->exams;
+		return View::make('patient-dashboard', array(
+			'title'		=> 'Dashboard',
+			'user'		=> $user,
+			'patient'	=> $patient,
+			'name'		=> $name,
+			'exams'		=> $exams,
+		));
+	}
+	
 	// Show patient survey
-	public function showSurvey() {
+	public function showSurvey($page = 1) {
+		$surveyLength = Config::get('app.surveyLength');
+	
+		// Throw 404 if going to an invalid page
+		if ($page < 1 || $page > $surveyLength) {
+			throw new NotFoundHttpException;
+		}
 		$survey = new Survey();
 		$results = Session::get('results');
 		if ($results != '') { // Show the results page
@@ -77,10 +98,12 @@ class PatientController extends BaseController {
 	}
 	
 	// Handle patient survey
-	public function handleSurvey() {
+	public function handleSurvey($page = 1) {
+		$surveyLength = Config::get('app.surveyLength');
+	
 		// Form validation
 		$rules = array();
-		for ($i = 0; $i < Config::get('app.surveyLength'); $i++) {
+		for ($i = 0; $i < $surveyLength; $i++) {
 			$rules['q' . $i] = 'required';
 		}
 		$validator = Validator::make(Input::all(), $rules);
@@ -94,7 +117,7 @@ class PatientController extends BaseController {
 			$scaleTotals = array(0, 0, 0);
 			$surveyTotal = 0;
 			$allInput = Input::all();
-			for ($i = 0; $i < Config::get('app.surveyLength'); $i++) {
+			for ($i = 0; $i < $surveyLength; $i++) {
 				$fields['survey_q' . $i] = $allInput['q' . $i];
 				$scaleTotals[$survey->questions[$i]->scale] += $allInput['q' . $i];
 				$surveyTotal += $allInput['q' . $i];
