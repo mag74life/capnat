@@ -7,8 +7,6 @@
 @stop
 
 @section('content')
-	<h1>CAPNAT</h1>
-	
 	<p>Patients, please log in below to begin your survey.</p>
 
 	{{ Form::open(array('url' => 'login')) }}
