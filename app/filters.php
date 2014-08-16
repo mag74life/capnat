@@ -52,6 +52,34 @@ Route::filter('staff', function()
 	}
 });
 
+Route::filter('staff0', function()
+{
+	if (Auth::user() && Auth::user()->userData->role != 0) {
+		return Redirect::to('/');
+	}
+});
+
+Route::filter('staff1', function()
+{
+	if (Auth::user() && Auth::user()->userData->role < 1) {
+		return Redirect::to('/');
+	}
+});
+
+Route::filter('staff2', function()
+{
+	if (Auth::user() && Auth::user()->userData->role < 2) {
+		return Redirect::to('/');
+	}
+});
+
+Route::filter('staff3', function()
+{
+	if (Auth::user() && Auth::user()->userData->role < 3) {
+		return Redirect::to('/');
+	}
+});
+
 
 Route::filter('auth.basic', function()
 {

@@ -19,6 +19,11 @@ class UserSeeder extends Seeder {
 		));
 		$patient = new Patient(array(
 			'name'			=> 'John Smith',
+			'dob'			=> '1974-03-15',
+			'gender'		=> 0,
+			'race'			=> 0,
+			'ethnicity'		=> 1,
+			'education'		=> 5,
 		));
 		$user->userData()->save($patient);
 		

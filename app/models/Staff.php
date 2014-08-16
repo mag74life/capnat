@@ -6,7 +6,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 class Staff extends Eloquent {
 
 	protected $table = 'staff';
-	protected $fillable = array('role');
+	protected $guarded = array('id', 'user_id', 'created_at', 'updated_at');
 
 	public function user()
 	{

@@ -13,9 +13,11 @@
 
 	<p>This is the patient dashboard.</p>
 	
-	<p><a href="{{ URL::to('survey') }}">Start a new survey</a></p>
+	@if ($option != NULL)
+		<p><a href="{{ URL::to('survey') }}">{{ $option }}</a></p>
+	@endif
 	
-	@if (count($exams) > 0)
+	@if (!$exams->isEmpty())
 		<h2>Completed surveys:</h2>
 		
 		<table border="1">

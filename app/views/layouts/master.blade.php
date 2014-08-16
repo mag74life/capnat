@@ -16,6 +16,8 @@
 			<link rel="stylesheet" href="/css/normalize.css">
 			<link rel="stylesheet" href="/css/main.css">
 			<script src="/js/vendor/modernizr.js"></script>
+			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+			<script>window.jQuery || document.write('<script src="js/vendor/jquery.js"><\/script>')</script>
 		@show
     </head>
     <body>
@@ -26,8 +28,5 @@
         <!-- Add your site or application content here -->
         <h1> CAPNAT </h1>
 		@yield('content')
-
-        {{-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> --}}
-        {{-- <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script> --}}
     </body>
 </html>

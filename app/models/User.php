@@ -11,8 +11,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @var string
 	 */
 	protected $table = 'users';
-	
-	protected $fillable = array('unique', 'type', 'password');
+	protected $guarded = array('id', 'remember_token', 'created_at', 'updated_at');
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -81,9 +80,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		return $this->email;
 	}
-
-	public function userData()
-	{
+	
+	
+	
+	public function userData() {
 		if ($this->type == '0') {
 			return $this->hasOne('Patient');
 		} else {

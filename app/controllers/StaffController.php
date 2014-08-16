@@ -13,10 +13,45 @@ class StaffController extends BaseController {
 		
 		// Only allow logged in staff to access the staff pages
 		$this->beforeFilter('staff', array(
+			'except' => array(
+				'showLogin',
+				'handleLogin',
+			),
+		));
+		
+		// Only clinicians can access
+		$this->beforeFilter('staff0', array(
 			'only' => array(
-				'showCreatePatient',
-				'handleCreatePatient',
-				'showViewPatients',
+				
+			),
+		));
+		
+		// Only research staff and above can access
+		$this->beforeFilter('staff1', array(
+			'only' => array(
+				'showAddPatient',
+				'handleAddPatient',
+				'showRemovePatient',
+				'handleRemovePatient',
+			),
+		));
+		
+		// Only project manager and above can access
+		$this->beforeFilter('staff2', array(
+			'only' => array(
+				'showPatientLookup',
+				'handlePatientLookup',
+				'showAddClinician',
+				'handleAddClinician',
+				'showAddResearchStaff',
+				'handleAddResearchStaff',
+			),
+		));
+		
+		// Only head researcher can access
+		$this->beforeFilter('staff3', array(
+			'only' => array(
+				'showResearchData',
 			),
 		));
 	}
@@ -60,36 +95,52 @@ class StaffController extends BaseController {
 		return Redirect::to('staff-login');
 	}
 	
-	// Show create patient
-	public function showCreatePatient() {
+	// Show patient dashboard
+	public function showDashboard() {
+		$user = Auth::user();
+		return View::make('staff' . $user->userData->role . '-dashboard', array(
+			'title'		=> 'Dashboard',
+			'role'		=> $user->userData->role,
+		));
+	}
+	
+	// Show add patient
+	public function showAddPatient() {
 		$unique = Session::get('unique');
 		$password = Session::get('password');
 		if ($unique || $password) {
-			return View::make('staff-create-patient-results', array(
-				'title'		=> 'Patient Created',
+			return View::make('staff-add-patient-results', array(
+				'title'		=> 'Patient Added',
 				'unique'	=> $unique,
 				'password'	=> $password,
 			));
 		} else {
-			return View::make('staff-create-patient', array(
-				'title'	=> 'Create Patient',
+			return View::make('staff-add-patient', array(
+				'title'	=> 'Add Patient',
 			));
 		}
 	}
 	
-	// Handle create patient
-	public function handleCreatePatient() {
+	// Handle add patient
+	public function handleAddPatient() {
 		// Form validation
 		$validator = Validator::make(Input::all(), array(
-			'name'		=> 'required',
+			'name'			=> 'required',
+			'dob'			=> 'required|date',
+			'gender'		=> 'required',
+			'race'			=> 'required',
+			'ethnicity'		=> 'required',
+			'education'		=> 'required',
 		));
 		
 		// Redirect back to the form if validation fails
 		if ($validator->fails()) {
-			return Redirect::to('create-patient')->withErrors($validator)->withInput(Input::all());
+			return Redirect::to('add-patient')->withErrors($validator)->withInput(Input::all());
 		} else {
-			$next = User::where('type', '0')->max('unique') + 1;
+			// Get the next available patient number
+			$unique = User::where('type', '=', '0')->select(DB::raw('MAX( CAST( `unique` AS UNSIGNED) ) + 1 as next'))->first()->next;
 			
+			// Generate a password
 			$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
 			$password = '';
 			for ($i = 0; $i < 6; $i++) {
@@ -97,16 +148,21 @@ class StaffController extends BaseController {
 			}
 			
 			$user = User::create(array(
-				'unique'		=> $next,
+				'unique'		=> $unique,
 				'type'			=> '0',
 				'password'		=> Hash::make($password),
 			));
 			$patient = new Patient(array(
 				'name'			=> Input::get('name'),
+				'dob'			=> date('Y-m-d', strtotime(Input::get('dob'))),
+				'gender'		=> Input::get('gender'),
+				'race'			=> Input::get('race'),
+				'ethnicity'		=> Input::get('ethnicity'),
+				'education'		=> Input::get('education'),
 			));
 			$user->userData()->save($patient);
 			
-			return Redirect::to('create-patient')->with('unique', $next)->with('password', $password);
+			return Redirect::to('add-patient')->with('unique', $unique)->with('password', $password);
 		}
 	}
 	

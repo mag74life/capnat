@@ -12,9 +12,9 @@ class PatientController extends BaseController {
 		
 		// Only allow logged in patients to access the patient survey
 		$this->beforeFilter('patient', array(
-			'only' => array(
-				'showSurvey',
-				'handleSurvey'
+			'except' => array(
+				'showLogin',
+				'handleLogin'
 			),
 		));
 	}
@@ -61,15 +61,20 @@ class PatientController extends BaseController {
 	// Show patient dashboard
 	public function showDashboard() {
 		$user = Auth::user();
-		$patient = $user->userData;
-		$name = $patient->name;
-		$exams = $patient->exams;
+		$newest = $user->userData->exams->first();
+		$option = NULL;
+		if ($newest == NULL || $newest->survey_total != NULL && $newest->assessment_total != NULL) {
+			$option = 'Start a new survey';
+		} else if ($newest->assessment_total == NULL) {
+			$option = 'Revise survey';
+		} else {
+			$option = 'Continue survey';
+		}
 		return View::make('patient-dashboard', array(
 			'title'		=> 'Dashboard',
-			'user'		=> $user,
-			'patient'	=> $patient,
-			'name'		=> $name,
-			'exams'		=> $exams,
+			'name'		=> $user->userData->name,
+			'exams'		=> $user->userData->exams,
+			'option'	=> $option,
 		));
 	}
 	
@@ -81,18 +86,29 @@ class PatientController extends BaseController {
 		if ($page < 1 || $page > $surveyLength) {
 			throw new NotFoundHttpException;
 		}
-		$survey = new Survey();
 		$results = Session::get('results');
 		if ($results != '') { // Show the results page
+			$survey = new Survey();
 			return View::make('patient-survey-results', array(
 				'title'		=> 'Survey Results',
 				'questions'	=> $survey->questions,
 				'results'	=> $results,
 			));
 		} else { // Show the survey form
+			$user = Auth::user();
+			$newest = $user->userData->exams->first();
+			if ($newest == NULL || $newest->survey_total != NULL && $newest->assessment_total != NULL) {
+				
+			} else if ($newest->assessment_total == NULL) {
+				
+			} else {
+				
+			}
+			$survey = new Survey();
 			return View::make('patient-survey', array(
 				'title'		=> 'Survey',
 				'survey'	=> $survey,
+				'newest' => $newest
 			));
 		}
 	}

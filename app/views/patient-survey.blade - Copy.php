@@ -7,14 +7,14 @@
 @stop
 
 @section('content')
-<pre><?php //var_dump($newest); ?></pre>
+<pre><?php var_dump($newest); ?></pre>
 
 	<p><a href="{{ URL::to('logout') }}">Log out</a></p>
 	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
 
 	<h1>Survey</h1>
 	
-	{{ Form::open(array('id' => 'survey', 'url' => 'survey')) }}
+	{{ Form::open(array('url' => 'survey')) }}
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{{ $error }}</li>
@@ -32,21 +32,9 @@
 					</ol>
 				</li>
 			@endfor
-			<li id="submit">
+			<li>
 				{{ Form::submit('Submit') }}
 			</li>
 		</ul>
 	{{ Form::close() }}
-	
-	<script>
-		$(function () {
-			
-			// Disable normal form handling
-			$('#survey').submit(function (e) {
-				e.preventDefault();
-			});
-			$('#submit').remove();
-			
-		});
-	</script>
 @stop
