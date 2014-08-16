@@ -141,11 +141,7 @@ class StaffController extends BaseController {
 			$unique = DB::select("SHOW TABLE STATUS LIKE 'patients'")[0]->Auto_increment;
 			
 			// Generate a password
-			$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-			$password = '';
-			for ($i = 0; $i < 6; $i++) {
-				$password .= $characters[rand(0, strlen($characters) - 1)];
-			}
+			$password = $this->generatePassword();
 			
 			$user = User::create(array(
 				'unique'		=> $unique,
@@ -203,6 +199,53 @@ class StaffController extends BaseController {
 		}
 	}
 	
+	// Show reset patient password
+	public function showPatientPassword() {
+		$unique = Session::get('unique');
+		$password = Session::get('password');
+		if ($unique || $password) {
+			return View::make('staff-patient-password-results', array(
+				'title'		=> 'Password Reset',
+				'unique'	=> $unique,
+				'password'	=> $password,
+			));
+		} else {
+			return View::make('staff-patient-password', array(
+				'title'	=> 'Reset Patient Password',
+			));
+		}
+	}
+	
+	// Handle reset patient password
+	public function handlePatientPassword() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique'		=> 'required',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('patient-password')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique = Input::get('unique');
+			$patient = Patient::find($unique);
+			if (!empty($patient)) {
+				$user = $patient->user;
+				
+				// Generate a new password
+				$password = $this->generatePassword();
+				
+				// Update the password in the database
+				$user->password = Hash::make($password);
+				$user->save();
+				
+				return Redirect::to('patient-password')->with('unique', $unique)->with('password', $password);
+			} else {
+				return Redirect::to('patient-password')->withErrors(array('failedIdMatch' => 'The password for patient ' . $unique . ' cannot be reset. No such patient exists in the database.'))->withInput(Input::all());
+			}
+		}
+	}
+	
 	// Show patient data
 	public function showViewPatients() {
 		$patients = Patient::orderBy('name', 'asc')->get();
@@ -214,6 +257,16 @@ class StaffController extends BaseController {
 			'title'		=> 'Patient Data',
 			'patients'	=> $patients,
 		));	
+	}
+	
+	// Generate patient password
+	private function generatePassword() {
+		$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+		$password = '';
+		for ($i = 0; $i < 6; $i++) {
+			$password .= $characters[rand(0, strlen($characters) - 1)];
+		}
+		return $password;
 	}
 
 }

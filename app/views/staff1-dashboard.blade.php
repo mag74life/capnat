@@ -14,5 +14,6 @@
 	<ul>
 		<li><a href="{{ URL::to('add-patient') }}">Add Patient</a></li>
 		<li><a href="{{ URL::to('remove-patient') }}">Remove Patient</a></li>
+		<li><a href="{{ URL::to('patient-password') }}">Reset Patient Password</a></li>
 	</ul>
 @stop

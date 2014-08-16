@@ -40,4 +40,10 @@ Route::get('add-patient', 'StaffController@showAddPatient');
 Route::post('add-patient', 'StaffController@handleAddPatient');
 Route::get('remove-patient', 'StaffController@showRemovePatient');
 Route::post('remove-patient', 'StaffController@handleRemovePatient');
+Route::get('patient-password', 'StaffController@showPatientPassword');
+Route::post('patient-password', 'StaffController@handlePatientPassword');
+
+
+
+
 Route::get('view-patients', 'StaffController@showViewPatients');
