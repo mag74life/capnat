@@ -78,7 +78,7 @@ class StaffController extends BaseController {
 			$userdata = array(
 				'unique'	=> Input::get('unique'),
 				'password'	=> Input::get('password'),
-				'type'		=> Input::get('type'),
+				'type'		=> 1,
 			);
 			
 			if (Auth::attempt($userdata)) {
@@ -138,7 +138,7 @@ class StaffController extends BaseController {
 			return Redirect::to('add-patient')->withErrors($validator)->withInput(Input::all());
 		} else {
 			// Get the next available patient number
-			$unique = User::where('type', '=', '0')->select(DB::raw('MAX( CAST( `unique` AS UNSIGNED) ) + 1 as next'))->first()->next;
+			$unique = DB::select("SHOW TABLE STATUS LIKE 'patients'")[0]->Auto_increment;
 			
 			// Generate a password
 			$characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -153,7 +153,7 @@ class StaffController extends BaseController {
 				'password'		=> Hash::make($password),
 			));
 			$patient = new Patient(array(
-				'name'			=> Input::get('name'),
+				'name'			=> trim(Input::get('name')),
 				'dob'			=> date('Y-m-d', strtotime(Input::get('dob'))),
 				'gender'		=> Input::get('gender'),
 				'race'			=> Input::get('race'),
@@ -163,6 +163,43 @@ class StaffController extends BaseController {
 			$user->userData()->save($patient);
 			
 			return Redirect::to('add-patient')->with('unique', $unique)->with('password', $password);
+		}
+	}
+	
+	// Show remove patient
+	public function showRemovePatient() {
+		$unique = Session::get('unique');
+		if ($unique) {
+			return View::make('staff-remove-patient-results', array(
+				'title'		=> 'Patient Removed',
+				'unique'	=> $unique,
+			));
+		} else {
+			return View::make('staff-remove-patient', array(
+				'title'	=> 'Remove Patient',
+			));
+		}
+	}
+	
+	// Handle remove patient
+	public function handleRemovePatient() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique'		=> 'required',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('remove-patient')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique = Input::get('unique');
+			$patient = Patient::find($unique);
+			if (!empty($patient)) {
+				$patient->user()->delete();
+				return Redirect::to('remove-patient')->with('unique', $unique);
+			} else {
+				return Redirect::to('remove-patient')->withErrors(array('failedIdMatch' => 'Patient ' . $unique . ' cannot be removed. No such patient exists in the database.'))->withInput(Input::all());
+			}
 		}
 	}
 	

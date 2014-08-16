@@ -26,7 +26,6 @@
 				{{ Form::password('password', array('placeholder' => 'Password')) }}
 			</li>
 			<li>
-				{{ Form::hidden('type', '0') }}
 				{{ Form::submit('Log in') }}
 			</li>
 		</ul>

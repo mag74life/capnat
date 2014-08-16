@@ -41,7 +41,7 @@ class PatientController extends BaseController {
 			$userdata = array(
 				'unique'	=> Input::get('unique'),
 				'password'	=> Input::get('password'),
-				'type'		=> Input::get('type'),
+				'type'		=> 0,
 			);
 			
 			if (Auth::attempt($userdata)) {
