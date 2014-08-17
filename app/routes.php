@@ -42,6 +42,16 @@ Route::get('remove-patient', 'StaffController@showRemovePatient');
 Route::post('remove-patient', 'StaffController@handleRemovePatient');
 Route::get('patient-password', 'StaffController@showPatientPassword');
 Route::post('patient-password', 'StaffController@handlePatientPassword');
+Route::get('add-clinician', 'StaffController@showAddClinician');
+Route::post('add-clinician', 'StaffController@handleAddClinician');
+Route::get('remove-clinician', 'StaffController@showRemoveClinician');
+Route::post('remove-clinician', 'StaffController@handleRemoveClinician');
+Route::get('add-staff', 'StaffController@showAddStaff');
+Route::post('add-staff', 'StaffController@handleAddStaff');
+Route::get('remove-staff', 'StaffController@showRemoveStaff');
+Route::post('remove-staff', 'StaffController@handleRemoveStaff');
+Route::get('patient-lookup', 'StaffController@showPatientLookup');
+Route::post('patient-lookup', 'StaffController@handlePatientLookup');
 
 
 

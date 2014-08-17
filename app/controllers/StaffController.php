@@ -33,6 +33,8 @@ class StaffController extends BaseController {
 				'handleAddPatient',
 				'showRemovePatient',
 				'handleRemovePatient',
+				'showPatientPassword',
+				'handlePatientPassword',
 			),
 		));
 		
@@ -43,8 +45,8 @@ class StaffController extends BaseController {
 				'handlePatientLookup',
 				'showAddClinician',
 				'handleAddClinician',
-				'showAddResearchStaff',
-				'handleAddResearchStaff',
+				'showAddStaff',
+				'handleAddStaff',
 			),
 		));
 		
@@ -67,7 +69,7 @@ class StaffController extends BaseController {
 	public function handleLogin() {
 		// Form validation
 		$validator = Validator::make(Input::all(), array(
-			'unique'	=> 'required|alpha_num',
+			'unique_id'	=> 'required',
 			'password'	=> 'required',
 		));
 		
@@ -76,7 +78,7 @@ class StaffController extends BaseController {
 			return Redirect::to('staff-login')->withErrors($validator)->withInput(Input::except('password'));
 		} else {
 			$userdata = array(
-				'unique'	=> Input::get('unique'),
+				'unique_id'	=> Input::get('unique_id'),
 				'password'	=> Input::get('password'),
 				'type'		=> 1,
 			);
@@ -106,12 +108,12 @@ class StaffController extends BaseController {
 	
 	// Show add patient
 	public function showAddPatient() {
-		$unique = Session::get('unique');
+		$unique_id = Session::get('unique_id');
 		$password = Session::get('password');
-		if ($unique || $password) {
+		if ($unique_id || $password) {
 			return View::make('staff-add-patient-results', array(
 				'title'		=> 'Patient Added',
-				'unique'	=> $unique,
+				'unique_id'	=> $unique_id,
 				'password'	=> $password,
 			));
 		} else {
@@ -138,13 +140,13 @@ class StaffController extends BaseController {
 			return Redirect::to('add-patient')->withErrors($validator)->withInput(Input::all());
 		} else {
 			// Get the next available patient number
-			$unique = DB::select("SHOW TABLE STATUS LIKE 'patients'")[0]->Auto_increment;
+			$unique_id = DB::select("SHOW TABLE STATUS LIKE 'patients'")[0]->Auto_increment;
 			
 			// Generate a password
 			$password = $this->generatePassword();
 			
 			$user = User::create(array(
-				'unique'		=> $unique,
+				'unique_id'		=> $unique_id,
 				'type'			=> '0',
 				'password'		=> Hash::make($password),
 			));
@@ -158,17 +160,17 @@ class StaffController extends BaseController {
 			));
 			$user->userData()->save($patient);
 			
-			return Redirect::to('add-patient')->with('unique', $unique)->with('password', $password);
+			return Redirect::to('add-patient')->with('unique_id', $unique_id)->with('password', $password);
 		}
 	}
 	
 	// Show remove patient
 	public function showRemovePatient() {
-		$unique = Session::get('unique');
-		if ($unique) {
+		$unique_id = Session::get('unique_id');
+		if ($unique_id) {
 			return View::make('staff-remove-patient-results', array(
 				'title'		=> 'Patient Removed',
-				'unique'	=> $unique,
+				'unique_id'	=> $unique_id,
 			));
 		} else {
 			return View::make('staff-remove-patient', array(
@@ -181,32 +183,59 @@ class StaffController extends BaseController {
 	public function handleRemovePatient() {
 		// Form validation
 		$validator = Validator::make(Input::all(), array(
-			'unique'		=> 'required',
+			'unique_id'		=> 'required|numeric',
 		));
 		
 		// Redirect back to the form if validation fails
 		if ($validator->fails()) {
 			return Redirect::to('remove-patient')->withErrors($validator)->withInput(Input::all());
 		} else {
-			$unique = Input::get('unique');
-			$patient = Patient::find($unique);
+			$unique_id = Input::get('unique_id');
+			$patient = Patient::find($unique_id);
 			if (!empty($patient)) {
 				$patient->user()->delete();
-				return Redirect::to('remove-patient')->with('unique', $unique);
+				return Redirect::to('remove-patient')->with('unique_id', $unique_id);
 			} else {
-				return Redirect::to('remove-patient')->withErrors(array('failedIdMatch' => 'Patient ' . $unique . ' cannot be removed. No such patient exists in the database.'))->withInput(Input::all());
+				return Redirect::to('remove-patient')->withErrors(array('failedIdMatch' => 'Patient ' . $unique_id . ' cannot be removed. No such patient exists in the database.'))->withInput(Input::all());
 			}
+		}
+	}
+	
+	// Show patient lookup
+	public function showPatientLookup() {
+		$results = Session::get('results');
+		return View::make('staff-patient-lookup', array(
+			'title'		=> 'Patient Lookup',
+			'results'	=> $results,
+		));
+	}
+	
+	// Handle patient lookup
+	public function handlePatientLookup() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'dob'		=> 'date',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('patient-lookup')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$name = '%' . preg_replace('/[^a-z]*([a-z]+)[^a-z]*/i', '$1%', Input::get('name'));
+			$results = Patient::where('name', 'like', $name)->get();
+			
+			return Redirect::to('patient-lookup')->with('results', $results)->withInput(Input::all());
 		}
 	}
 	
 	// Show reset patient password
 	public function showPatientPassword() {
-		$unique = Session::get('unique');
+		$unique_id = Session::get('unique_id');
 		$password = Session::get('password');
-		if ($unique || $password) {
+		if ($unique_id || $password) {
 			return View::make('staff-patient-password-results', array(
 				'title'		=> 'Password Reset',
-				'unique'	=> $unique,
+				'unique_id'	=> $unique_id,
 				'password'	=> $password,
 			));
 		} else {
@@ -220,15 +249,15 @@ class StaffController extends BaseController {
 	public function handlePatientPassword() {
 		// Form validation
 		$validator = Validator::make(Input::all(), array(
-			'unique'		=> 'required',
+			'unique_id'		=> 'required',
 		));
 		
 		// Redirect back to the form if validation fails
 		if ($validator->fails()) {
 			return Redirect::to('patient-password')->withErrors($validator)->withInput(Input::all());
 		} else {
-			$unique = Input::get('unique');
-			$patient = Patient::find($unique);
+			$unique_id = Input::get('unique_id');
+			$patient = Patient::find($unique_id);
 			if (!empty($patient)) {
 				$user = $patient->user;
 				
@@ -239,10 +268,182 @@ class StaffController extends BaseController {
 				$user->password = Hash::make($password);
 				$user->save();
 				
-				return Redirect::to('patient-password')->with('unique', $unique)->with('password', $password);
+				return Redirect::to('patient-password')->with('unique_id', $unique_id)->with('password', $password);
 			} else {
-				return Redirect::to('patient-password')->withErrors(array('failedIdMatch' => 'The password for patient ' . $unique . ' cannot be reset. No such patient exists in the database.'))->withInput(Input::all());
+				return Redirect::to('patient-password')->withErrors(array('failedIdMatch' => 'The password for patient ' . $unique_id . ' cannot be reset. No such patient exists in the database.'))->withInput(Input::all());
 			}
+		}
+	}
+	
+	// Show add clinician
+	public function showAddClinician() {
+		$unique_id = Session::get('unique_id');
+		if ($unique_id) {
+			return View::make('staff-add-clinician-results', array(
+				'title'		=> 'Clinician Added',
+				'unique_id'	=> $unique_id,
+			));
+		} else {
+			return View::make('staff-add-clinician', array(
+				'title'	=> 'Add Clinician',
+			));
+		}
+	}
+	
+	// Handle add clinician
+	public function handleAddClinician() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'required|alpha',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('add-clinician')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique_id = Input::get('unique_id');
+			
+			// Throw error if uniquename is already in the database
+			$user = User::where('unique_id', '=', $unique_id)->first();
+			if (!empty($user)) {
+				return Redirect::to('add-clinician')->withErrors(array('duplicateUniquename' => 'The user "' . $unique_id . '" already exists in the database and cannot be added as a clinician.'))->withInput(Input::all());
+			}
+			
+			$user = User::create(array(
+				'unique_id'		=> $unique_id,
+				'type'			=> '1',
+				'password'		=> Hash::make('capnat'),
+			));
+			$staff = new Staff(array(
+				'role'			=> '0',
+			));
+			$user->userData()->save($staff);
+			
+			return Redirect::to('add-clinician')->with('unique_id', $unique_id);
+		}
+	}
+	
+	// Show remove clinician
+	public function showRemoveClinician() {
+		$unique_id = Session::get('unique_id');
+		if ($unique_id) {
+			return View::make('staff-remove-clinician-results', array(
+				'title'		=> 'Clinician Removed',
+				'unique_id'	=> $unique_id,
+			));
+		} else {
+			return View::make('staff-remove-clinician', array(
+				'title'	=> 'Remove Clinician',
+			));
+		}
+	}
+	
+	// Handle remove clinician
+	public function handleRemoveClinician() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'required|alpha',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('remove-clinician')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique_id = Input::get('unique_id');
+			$user = User::where('unique_id', '=', $unique_id)->first();
+			if (!empty($user)) {
+				if ($user->userData->role == '0') {
+					$user->delete();
+					return Redirect::to('remove-clinician')->with('unique_id', $unique_id);
+				}
+			}
+			return Redirect::to('remove-clinician')->withErrors(array('failedIdMatch' => 'Clinician ' . $unique_id . ' cannot be removed. No such clinician exists in the database.'))->withInput(Input::all());
+		}
+	}
+	
+	// Show add research staff
+	public function showAddStaff() {
+		$unique_id = Session::get('unique_id');
+		if ($unique_id) {
+			return View::make('staff-add-staff-results', array(
+				'title'		=> 'Research Staff Added',
+				'unique_id'	=> $unique_id,
+			));
+		} else {
+			return View::make('staff-add-staff', array(
+				'title'	=> 'Add Research Staff',
+			));
+		}
+	}
+	
+	// Handle add research staff
+	public function handleAddStaff() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'required|alpha',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('add-staff')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique_id = Input::get('unique_id');
+			
+			// Throw error if uniquename is already in the database
+			$user = User::where('unique_id', '=', $unique_id)->first();
+			if (!empty($user)) {
+				return Redirect::to('add-staff')->withErrors(array('duplicateUniquename' => 'The user "' . $unique_id . '" already exists in the database and cannot be added as a research staff.'))->withInput(Input::all());
+			}
+			
+			$user = User::create(array(
+				'unique_id'		=> $unique_id,
+				'type'			=> '1',
+				'password'		=> Hash::make('capnat'),
+			));
+			$staff = new Staff(array(
+				'role'			=> '1',
+			));
+			$user->userData()->save($staff);
+			
+			return Redirect::to('add-staff')->with('unique_id', $unique_id);
+		}
+	}
+	
+	// Show remove research staff
+	public function showRemoveStaff() {
+		$unique_id = Session::get('unique_id');
+		if ($unique_id) {
+			return View::make('staff-remove-staff-results', array(
+				'title'		=> 'Research Staff Removed',
+				'unique_id'	=> $unique_id,
+			));
+		} else {
+			return View::make('staff-remove-staff', array(
+				'title'	=> 'Remove Research Staff',
+			));
+		}
+	}
+	
+	// Handle remove research staff
+	public function handleRemoveStaff() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'required|alpha',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('remove-staff')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique_id = Input::get('unique_id');
+			$user = User::where('unique_id', '=', $unique_id)->first();
+			if (!empty($user)) {
+				if ($user->userData->role == '1') {
+					$user->delete();
+					return Redirect::to('remove-staff')->with('unique_id', $unique_id);
+				}
+			}
+			return Redirect::to('remove-staff')->withErrors(array('failedIdMatch' => 'Research staff ' . $unique_id . ' cannot be removed. No such research staff exists in the database.'))->withInput(Input::all());
 		}
 	}
 	

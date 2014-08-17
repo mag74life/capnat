@@ -18,8 +18,8 @@
 		
 		<ul>
 			<li>
-				{{-- Form::label('unique', 'Patient ID') --}}
-				{{ Form::text('unique', null, array('maxlength' => '10', 'placeholder' => 'Patient ID')) }}
+				{{-- Form::label('unique_id', 'Patient ID') --}}
+				{{ Form::text('unique_id', null, array('maxlength' => '10', 'placeholder' => 'Patient ID')) }}
 			</li>
 			<li>
 				{{-- Form::label('password', 'Password') --}}

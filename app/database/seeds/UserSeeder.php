@@ -13,7 +13,7 @@ class UserSeeder extends Seeder {
 		
 		// Create one patient
 		$user = User::create(array(
-			'unique'		=> '1',
+			'unique_id'		=> '1',
 			'type'			=> '0',
 			'password'		=> Hash::make('roygbiv'),
 		));
@@ -29,12 +29,12 @@ class UserSeeder extends Seeder {
 		
 		// Create one clinician
 		$user = User::create(array(
-			'unique'		=> 'eagard',
+			'unique_id'		=> 'eagard',
 			'type'			=> '1',
 			'password'		=> Hash::make('capnat'),
 		));
 		$staff = new Staff(array(
-			'role'			=> '1',
+			'role'			=> '2',
 		));
 		$user->userData()->save($staff);
 	}

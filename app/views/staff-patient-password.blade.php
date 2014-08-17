@@ -21,8 +21,8 @@
 		
 		<ul>
 			<li>
-				{{ Form::label('unique', 'Patient ID') }}
-				{{ Form::text('unique', null, array('required', 'maxlength' => '10', 'pattern' => '\d+')) }}
+				{{ Form::label('unique_id', 'Patient ID') }}
+				{{ Form::text('unique_id', null, array('required', 'maxlength' => '10', 'pattern' => '\d+')) }}
 			</li>
 			<li>
 				{{ Form::submit('Submit') }}

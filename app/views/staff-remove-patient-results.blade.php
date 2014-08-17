@@ -12,7 +12,7 @@
 	
 	<h1>Patient Removed</h1>
 	
-	<p>Patient {{ $unique }} has been removed.</p>
+	<p>Patient {{ $unique_id }} has been removed.</p>
 	
 	<p><a href="{{ URL::to('/') }}">Return to the dashboard</a></p>
 @stop

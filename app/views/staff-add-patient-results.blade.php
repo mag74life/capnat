@@ -10,7 +10,7 @@
 	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
 	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
 	
-	<h1>Patient Created</h1>
+	<h1>Patient Added</h1>
 	
 	<table border="1">
 		<tr>
@@ -18,7 +18,7 @@
 			<th>Password</th>
 		</tr>
 		<tr>
-			<td>{{ $unique }}</td>
+			<td>{{ $unique_id }}</td>
 			<td>{{ $password }}</td>
 		</tr>
 	</table>

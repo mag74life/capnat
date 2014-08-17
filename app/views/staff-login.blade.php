@@ -16,8 +16,8 @@
 		
 		<ul>
 			<li>
-				{{-- Form::label('unique', 'Uniquename') --}}
-				{{ Form::text('unique', null, array('placeholder' => 'Uniquename')) }}
+				{{-- Form::label('unique_id', 'Uniquename') --}}
+				{{ Form::text('unique_id', null, array('placeholder' => 'Uniquename')) }}
 			</li>
 			<li>
 				{{-- Form::label('password', 'Password') --}}

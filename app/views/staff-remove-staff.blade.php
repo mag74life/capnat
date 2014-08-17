@@ -10,9 +10,9 @@
 	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
 	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
 
-	<h1>Remove Patient</h1>
+	<h1>Remove Research Staff</h1>
 	
-	{{ Form::open(array('url' => 'remove-patient')) }}
+	{{ Form::open(array('url' => 'remove-staff')) }}
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{{ $error }}</li>
@@ -21,8 +21,8 @@
 		
 		<ul>
 			<li>
-				{{ Form::label('unique_id', 'Patient ID') }}
-				{{ Form::text('unique_id', null, array('required', 'maxlength' => '10', 'pattern' => '\d+')) }}
+				{{ Form::label('unique_id', 'Uniquename') }}
+				{{ Form::text('unique_id', null, array('required', 'pattern' => '[a-z]+')) }}
 			</li>
 			<li>
 				{{ Form::submit('Submit') }}
