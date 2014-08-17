@@ -210,9 +210,9 @@ class StaffController extends BaseController {
 		$results = Session::get('results');
 		return View::make('staff-patient-lookup', array(
 			'title'				=> 'Patient Lookup',
-			'genderOptions'		=> PatientHelper::getOptions('gender'),
-			'raceOptions'		=> PatientHelper::getOptions('race'),
-			'ethnicityOptions'	=> PatientHelper::getOptions('ethnicity'),
+			'genderOptions'		=> array('' => '') + PatientHelper::getOptions('gender'),
+			'raceOptions'		=> array('' => '') + PatientHelper::getOptions('race'),
+			'ethnicityOptions'	=> array('' => '') + PatientHelper::getOptions('ethnicity'),
 			'results'			=> $results,
 		));
 	}
@@ -228,9 +228,24 @@ class StaffController extends BaseController {
 		if ($validator->fails()) {
 			return Redirect::to('patient-lookup')->withErrors($validator)->withInput(Input::all());
 		} else {
-			$name = '%' . preg_replace('/[^a-z]*([a-z]+)[^a-z]*/i', '$1%', Input::get('name'));
-			$results = Patient::where('name', 'like', $name)->get();
-			
+			$results = Patient::where(function ($query) {
+				if (Input::get('name') != '') {
+					$name = '%' . preg_replace('/[^a-z]*([a-z]+)[^a-z]*/i', '$1%', Input::get('name'));
+					$query->where('name', 'like', $name);
+				}
+				if (Input::get('dob') != '') {
+					$query->where('dob', '=', date('Y-m-d', strtotime(Input::get('dob'))));
+				}
+				if (Input::get('gender')  != '') {
+					$query->where('gender', '=', Input::get('gender'));
+				}
+				if (Input::get('race')  != '') {
+					$query->where('race', '=', Input::get('race'));
+				}
+				if (Input::get('ethnicity')  != '') {
+					$query->where('ethnicity', '=', Input::get('ethnicity'));
+				}
+			})->get();
 			return Redirect::to('patient-lookup')->with('results', $results)->withInput(Input::all());
 		}
 	}

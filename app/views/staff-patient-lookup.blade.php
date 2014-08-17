@@ -12,6 +12,8 @@
 	
 	<h1>Patient Lookup</h1>
 	
+	<p>Enter criteria to narrow your search. All fields are optional.</p>
+	
 	{{ Form::open(array('url' => 'patient-lookup')) }}
 		<ul>
 			@foreach($errors->all() as $error)
@@ -41,7 +43,7 @@
 				{{ Form::select('ethnicity', $ethnicityOptions) }}
 			</li>
 			<li>
-				{{ Form::submit('Submit') }}
+				{{ Form::submit('Search') }}
 			</li>
 		</ul>
 	{{ Form::close() }}
@@ -69,5 +71,7 @@
 				</tr>
 			@endforeach
 		</table>
+	@else
+		<p>The selected query returned no results.</p>
 	@endif
 @stop
