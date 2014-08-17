@@ -118,7 +118,11 @@ class StaffController extends BaseController {
 			));
 		} else {
 			return View::make('staff-add-patient', array(
-				'title'	=> 'Add Patient',
+				'title'				=> 'Add Patient',
+				'genderOptions'		=> PatientHelper::getOptions('gender'),
+				'raceOptions'		=> PatientHelper::getOptions('race'),
+				'ethnicityOptions'	=> PatientHelper::getOptions('ethnicity'),
+				'educationOptions'	=> PatientHelper::getOptions('education'),
 			));
 		}
 	}
@@ -205,8 +209,11 @@ class StaffController extends BaseController {
 	public function showPatientLookup() {
 		$results = Session::get('results');
 		return View::make('staff-patient-lookup', array(
-			'title'		=> 'Patient Lookup',
-			'results'	=> $results,
+			'title'				=> 'Patient Lookup',
+			'genderOptions'		=> PatientHelper::getOptions('gender'),
+			'raceOptions'		=> PatientHelper::getOptions('race'),
+			'ethnicityOptions'	=> PatientHelper::getOptions('ethnicity'),
+			'results'			=> $results,
 		));
 	}
 	
