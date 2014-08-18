@@ -7,14 +7,12 @@
 @stop
 
 @section('content')
-<pre><?php //var_dump($newest); ?></pre>
-
 	<p><a href="{{ URL::to('logout') }}">Log out</a></p>
 	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
 
 	<h1>Survey</h1>
 	
-	{{ Form::open(array('id' => 'survey', 'url' => 'survey')) }}
+	{{ Form::model($exam, array('route' => 'survey')) }}
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{{ $error }}</li>
@@ -22,31 +20,15 @@
 		</ul>
 		
 		<ul>
-			@for ($i = 0; $i < Config::get('app.surveyLength'); $i++)
+			@for ($i = 0; $i < count($questions); $i++)
 				<li>
-					<p>{{ $survey->questions[$i]->question }}</p>
-					<ol>
-						@for ($j = 0; $j < count($survey->choices); $j++)
-							<li>{{ Form::radio('q' . $i, $j, null, array('id' => 'q' . $i . '-' . $j)) }} {{ Form::label('q' . $i . '-' . $j, $survey->choices[$j]) }}</li>
-						@endfor
-					</ol>
+					<p>{{ $questions[$i]['question'] }}</p>
+					{{ Form::radioGroup('survey_q' . $i, $choices, array('required')) }}
 				</li>
 			@endfor
-			<li id="submit">
+			<li>
 				{{ Form::submit('Submit') }}
 			</li>
 		</ul>
 	{{ Form::close() }}
-	
-	<script>
-		$(function () {
-			
-			// Disable normal form handling
-			$('#survey').submit(function (e) {
-				e.preventDefault();
-			});
-			$('#submit').remove();
-			
-		});
-	</script>
 @stop

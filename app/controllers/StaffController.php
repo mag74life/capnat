@@ -119,10 +119,10 @@ class StaffController extends BaseController {
 		} else {
 			return View::make('staff-add-patient', array(
 				'title'				=> 'Add Patient',
-				'genderOptions'		=> PatientHelper::getOptions('gender'),
-				'raceOptions'		=> PatientHelper::getOptions('race'),
-				'ethnicityOptions'	=> PatientHelper::getOptions('ethnicity'),
-				'educationOptions'	=> PatientHelper::getOptions('education'),
+				'genderOptions'		=> PatientDemographics::getOptions('gender'),
+				'raceOptions'		=> PatientDemographics::getOptions('race'),
+				'ethnicityOptions'	=> PatientDemographics::getOptions('ethnicity'),
+				'educationOptions'	=> PatientDemographics::getOptions('education'),
 			));
 		}
 	}
@@ -210,9 +210,9 @@ class StaffController extends BaseController {
 		$results = Session::get('results');
 		return View::make('staff-patient-lookup', array(
 			'title'				=> 'Patient Lookup',
-			'genderOptions'		=> array('' => '') + PatientHelper::getOptions('gender'),
-			'raceOptions'		=> array('' => '') + PatientHelper::getOptions('race'),
-			'ethnicityOptions'	=> array('' => '') + PatientHelper::getOptions('ethnicity'),
+			'genderOptions'		=> array('' => '') + PatientDemographics::getOptions('gender'),
+			'raceOptions'		=> array('' => '') + PatientDemographics::getOptions('race'),
+			'ethnicityOptions'	=> array('' => '') + PatientDemographics::getOptions('ethnicity'),
 			'results'			=> $results,
 		));
 	}

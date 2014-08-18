@@ -29,8 +29,8 @@ Route::get('/', $dashboard);
 Route::get('login', 'PatientController@showLogin');
 Route::post('login', 'PatientController@handleLogin');
 Route::any('logout', 'PatientController@handleLogout');
-Route::get('survey/{page?}', 'PatientController@showSurvey');
-Route::post('survey/{page?}', 'PatientController@handleSurvey');
+Route::get('survey/{page?}', array('as' => 'survey', 'uses' => 'PatientController@showSurvey'));
+Route::post('survey', 'PatientController@handleSurvey');
 
 // Staff
 Route::get('staff-login', 'StaffController@showLogin');

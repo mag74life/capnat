@@ -1,6 +1,6 @@
 <?php
 
-class PatientHelper {
+class PatientDemographics {
 
 	// Demographic options
 	private static $demoOpts = array(
