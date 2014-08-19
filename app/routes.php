@@ -29,10 +29,13 @@ Route::get('/', $dashboard);
 Route::get('login', 'PatientController@showLogin');
 Route::post('login', 'PatientController@handleLogin');
 Route::any('logout', 'PatientController@handleLogout');
-Route::get('survey/{page?}', array('as' => 'survey', 'uses' => 'PatientController@showSurvey'));
-Route::post('survey', 'PatientController@handleSurvey');
+Route::get('survey', array('as' => 'survey.new', 'uses' => 'PatientController@showSurvey'));
+Route::post('survey', array('as' => 'survey.new', 'uses' => 'PatientController@handleSurvey'));
+Route::get('survey/revise', array('as' => 'survey.revise', 'uses' => 'PatientController@showSurvey'));
+Route::post('survey/revise', array('as' => 'survey.revise', 'uses' => 'PatientController@handleSurvey'));
 
 // Staff
+Route::post('clinician', 'StaffController@handleClinicianDashboard');
 Route::get('staff-login', 'StaffController@showLogin');
 Route::post('staff-login', 'StaffController@handleLogin');
 Route::any('staff-logout', 'StaffController@handleLogout');

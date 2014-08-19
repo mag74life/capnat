@@ -12,7 +12,7 @@
 
 	<h1>Survey</h1>
 	
-	{{ Form::model($exam, array('route' => 'survey')) }}
+	{{ Form::model($exam, array('route' => $route)) }}
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{{ $error }}</li>

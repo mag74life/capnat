@@ -23,7 +23,7 @@ class PatientSurvey {
 		array('question' => 'Did you have blurred vision?', 'scale' => 2),
 		array('question' => 'Did you have difficulty hearing?', 'scale' => 0),
 		array('question' => 'Please answer the following question only if you drive a car. Did you have difficulty using pedals?', 'scale' => 1),
-		array('question' => 'Please answer the following question only if you are a man. Did you have difficulty getting or maintaining an erection?', 'scale' => 2),		
+		array('question' => 'Please answer the following question only if you are a man. Did you have difficulty getting or maintaining an erection?', 'scale' => 2),
 	);
 	
 	// Choices

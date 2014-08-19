@@ -34,7 +34,7 @@ class UserSeeder extends Seeder {
 			'password'		=> Hash::make('capnat'),
 		));
 		$staff = new Staff(array(
-			'role'			=> '2',
+			'role'			=> '0',
 		));
 		$user->userData()->save($staff);
 	}

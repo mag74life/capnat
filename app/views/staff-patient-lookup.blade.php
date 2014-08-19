@@ -48,30 +48,32 @@
 		</ul>
 	{{ Form::close() }}
 	
-	@if (!empty($results) && !$results->isEmpty())
-		<h2>Search Results:</h2>
-		
-		<table border="1">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Date of Birth</th>
-				<th>Gender</th>
-				<th>Race</th>
-				<th>Ethnicity</th>
-			</tr>
-			@foreach ($results as $row)
+	@if (!empty($results))
+		@if (!$results->isEmpty())
+			<h2>Search Results:</h2>
+			
+			<table border="1">
 				<tr>
-					<td>{{ $row->id }}</td>
-					<td>{{ $row->name }}</td>
-					<td>{{ $row->dob }}</td>
-					<td>{{ $genderOptions[$row->gender] }}</td>
-					<td>{{ $raceOptions[$row->race] }}</td>
-					<td>{{ $ethnicityOptions[$row->ethnicity] }}</td>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Date of Birth</th>
+					<th>Gender</th>
+					<th>Race</th>
+					<th>Ethnicity</th>
 				</tr>
-			@endforeach
-		</table>
-	@else
-		<p>The selected query returned no results.</p>
+				@foreach ($results as $row)
+					<tr>
+						<td>{{ $row->id }}</td>
+						<td>{{ $row->name }}</td>
+						<td>{{ $row->dob }}</td>
+						<td>{{ $genderOptions[$row->gender] }}</td>
+						<td>{{ $raceOptions[$row->race] }}</td>
+						<td>{{ $ethnicityOptions[$row->ethnicity] }}</td>
+					</tr>
+				@endforeach
+			</table>
+		@else
+			<p>The selected query returned no results.</p>
+		@endif
 	@endif
 @stop

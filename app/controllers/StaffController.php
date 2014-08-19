@@ -22,7 +22,7 @@ class StaffController extends BaseController {
 		// Only clinicians can access
 		$this->beforeFilter('staff0', array(
 			'only' => array(
-				
+				'handleClinicianDashboard',
 			),
 		));
 		
@@ -93,17 +93,56 @@ class StaffController extends BaseController {
 	
 	// Handle staff logout
 	public function handleLogout() {
+		Session::flush();
 		Auth::logout();
 		return Redirect::to('staff-login');
 	}
 	
-	// Show patient dashboard
+	// Show staff dashboard
 	public function showDashboard() {
-		$user = Auth::user();
-		return View::make('staff' . $user->userData->role . '-dashboard', array(
+		$vars = array(
 			'title'		=> 'Dashboard',
-			'role'		=> $user->userData->role,
+		);
+		$user = Auth::user();
+		$role = $user->userData->role;
+		if ($role == '0') { // User is clinician
+			$patient = Session::get('patient');
+			if ($patient) {
+				$newest = Patient::find($patient)->exams->first(); // Grab patient's most recent exam
+				if ($newest != NULL) {
+					if ($newest->survey_total != NULL && $newest->assessment_total == NULL) { // Clinician can start new assessment
+						$vars['option'] = 'Start a new assessment';
+					} elseif ($newest != NULL) { // Clinician can revise assessment
+						$vars['option'] = 'Revise assessment';
+					}
+				} else {
+					
+				}
+			}
+		}
+		return View::make('staff' . $role . '-dashboard', $vars);
+	}
+	
+	// Handle clinician dashboard
+	public function handleClinicianDashboard() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'required|numeric',
 		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('/')->withErrors($validator)->withInput(Input::all());
+		} else {
+			$unique_id = Input::get('unique_id');
+			$patient = Patient::find($unique_id);
+			if (!empty($patient)) {
+				Session::put('patient', $unique_id);
+				return Redirect::to('/')->withInput(Input::all());
+			} else {
+				return Redirect::to('/')->withErrors(array('failedIdMatch' => 'Patient ' . $unique_id . ' cannot be selected. No such patient exists in the database.'))->withInput(Input::all());
+			}
+		}
 	}
 	
 	// Show add patient
@@ -271,7 +310,7 @@ class StaffController extends BaseController {
 	public function handlePatientPassword() {
 		// Form validation
 		$validator = Validator::make(Input::all(), array(
-			'unique_id'		=> 'required',
+			'unique_id'		=> 'required|numeric',
 		));
 		
 		// Redirect back to the form if validation fails

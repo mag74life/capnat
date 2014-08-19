@@ -15,14 +15,14 @@ class CreateExamsTable extends Migration {
 		Schema::create('exams', function($table) {
 			$table->increments('id');
 			$table->integer('patient_id')->unsigned();
-			for ($i = 0; $i < Config::get('app.surveyLength'); $i++) {
+			for ($i = 0; $i < count(PatientSurvey::getQuestions()); $i++) {
 				$table->tinyInteger('survey_q' . $i)->unsigned()->nullable();
 			}
 			$table->tinyInteger('survey_scale0')->unsigned()->nullable();
 			$table->tinyInteger('survey_scale1')->unsigned()->nullable();
 			$table->tinyInteger('survey_scale2')->unsigned()->nullable();
 			$table->tinyInteger('survey_total')->unsigned()->nullable();
-			for ($i = 0; $i < Config::get('app.assessmentLength'); $i++) {
+			for ($i = 0; $i < count(ClinicianAssessment::getQuestions()); $i++) {
 				$table->tinyInteger('assessment_q' . $i)->unsigned()->nullable();
 			}
 			$table->tinyInteger('assessment_total')->unsigned()->nullable();

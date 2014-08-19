@@ -55,40 +55,43 @@ class PatientController extends BaseController {
 	
 	// Handle patient logout
 	public function handleLogout() {
+		Session::flush();
 		Auth::logout();
 		return Redirect::to('login');
 	}
 	
 	// Show patient dashboard
 	public function showDashboard() {
+		$vars = array(
+			'title'			=> 'Dashboard',
+			'newSurvey'		=> false,
+			'reviseExam'	=> null,
+		);
 		$user = Auth::user();
-		$newest = $user->userData->exams->first();
-		$option = NULL;
-		if ($newest == NULL || $newest->survey_total != NULL && $newest->assessment_total != NULL) { // Patient can start a new survey
+		$newest = $user->userData->exams->first(); // Grab the most recent survey
+		if ($newest == null || $newest->survey_total != null && $newest->assessment_total != null || $newest->survey_total == 0) { // Patient can start a new survey
 			$option = 'Start a new survey';
-		} else if ($newest->assessment_total == NULL) { // Patient can revise the most recent survey
+		} else if ($newest->assessment_total == null) { // Patient can revise the most recent survey
 			$option = 'Revise survey';
-		} else { // Patient can continue the current, incomplete survey
-			$option = 'Continue survey';
 		}
-		return View::make('patient-dashboard', array(
-			'title'		=> 'Dashboard',
-			'name'		=> $user->userData->name,
-			'exams'		=> $user->userData->exams,
-			'option'	=> $option,
-		));
+		
+		// Can the patient start a new survey?
+		if ($newest == null || $newest->survey_total == 0 || $newest->assessment_total != null) {
+			$vars['newSurvey'] = true;
+		}
+		
+		// Can the patient revise the latest survey?
+		if ($newest != null && $newest->assessment_total == null) {
+			$vars['reviseExam'] = $newest->id;
+		}
+		
+		$vars['name'] = $user->userData->name;
+		$vars['exams'] = $user->userData->exams;
+		return View::make('patient-dashboard', $vars);
 	}
 	
 	// Show patient survey
-	public function showSurvey($page = 1) {
-		/*
-		$surveyLength = Config::get('app.surveyLength');
-	
-		// Throw 404 if going to an invalid page
-		if ($page < 1 || $page > $surveyLength) {
-			throw new NotFoundHttpException;
-		}
-		*/
+	public function showSurvey() {
 		$results = Session::get('results');
 		if ($results != '') { // Show the results page
 			return View::make('patient-survey-results', array(
@@ -97,24 +100,29 @@ class PatientController extends BaseController {
 				'results'	=> $results,
 			));
 		} else { // Show the survey form
+			$vars = array(
+				'title'		=> 'Survey',
+				'exam'		=> null,
+			);
 			$user = Auth::user();
 			$newest = $user->userData->exams->first(); // Grab the most recent survey
-			$questions = PatientSurvey::getQuestions();
-			$choices = PatientSurvey::getChoices();
-			$exam = $newest;
-			if ($newest == NULL || $newest->survey_total != NULL && $newest->assessment_total != NULL) { // Patient can start a new survey
-				$exam = NULL;
-			} else if ($newest->assessment_total == NULL) { // Patient can revise the most recent survey
-				
-			} else { // Patient can continue the current, incomplete survey
-				
+			if (Route::currentRouteName() == 'survey.new') {
+				// Redirect to dashboard if patient cannot start new survey at this time
+				if ($newest != null && $newest->survey_total != 0 && $newest->assessment_total == null) {
+					return Redirect::to('/');
+				}
+				$vars['route'] = 'survey.new';
+			} else {
+				// Redirect to dashboard if patient cannot revise the latest survey at this time
+				if ($newest == null || $newest->assessment_total != null) {
+					return Redirect::to('/');
+				}
+				$vars['exam'] = $newest;
+				$vars['route'] = 'survey.revise';
 			}
-			return View::make('patient-survey', array(
-				'title'		=> 'Survey',
-				'questions'	=> $questions,
-				'choices'	=> $choices,
-				'exam'		=> $exam,
-			));
+			$vars['questions'] = PatientSurvey::getQuestions();
+			$vars['choices'] = PatientSurvey::getChoices();
+			return View::make('patient-survey', $vars);
 		}
 	}
 	
@@ -148,11 +156,19 @@ class PatientController extends BaseController {
 			$fields['survey_total'] = $surveyTotal;
 			$user = Auth::user();
 			$newest = $user->userData->exams->first(); // Grab the most recent survey
-			if ($newest == NULL || $newest->survey_total != NULL && $newest->assessment_total != NULL) { // Create new exam
+			if (Route::currentRouteName() == 'survey.new') {
+				// Redirect to dashboard if patient cannot start new survey at this time
+				if ($newest != null && $newest->survey_total != 0 && $newest->assessment_total == null) {
+					return Redirect::to('/');
+				}
 				$exam = new Exam($fields);
 				$patient = Auth::user()->userData;
 				$patient->exams()->save($exam);
-			} else { // Revise existing exam
+			} else {
+				// Redirect to dashboard if patient cannot revise the latest survey at this time
+				if ($newest == null || $newest->assessment_total != null) {
+					return Redirect::to('/');
+				}
 				$exam = Exam::find($newest->id);
 				$exam->update($fields);
 			}
