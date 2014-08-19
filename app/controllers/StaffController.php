@@ -23,6 +23,8 @@ class StaffController extends BaseController {
 		$this->beforeFilter('staff0', array(
 			'only' => array(
 				'handleClinicianDashboard',
+				'showAssessment',
+				'handleAssessment',
 			),
 		));
 		
@@ -54,6 +56,7 @@ class StaffController extends BaseController {
 		$this->beforeFilter('staff3', array(
 			'only' => array(
 				'showResearchData',
+				'handleResearchData',
 			),
 		));
 	}
@@ -107,16 +110,30 @@ class StaffController extends BaseController {
 		$role = $user->userData->role;
 		if ($role == '0') { // User is clinician
 			$patient = Session::get('patient');
-			if ($patient) {
-				$newest = Patient::find($patient)->exams->first(); // Grab patient's most recent exam
-				if ($newest != NULL) {
-					if ($newest->survey_total != NULL && $newest->assessment_total == NULL) { // Clinician can start new assessment
-						$vars['option'] = 'Start a new assessment';
-					} elseif ($newest != NULL) { // Clinician can revise assessment
-						$vars['option'] = 'Revise assessment';
+			if ($patient != null) {
+				$patient = Patient::find($patient);
+				$newest = $patient->exams->first(); // Grab patient's most recent exam
+				$vars['name'] = $patient->name;
+				$vars['exams'] = $patient->exams()->whereNotNull('assessment_total')->get();
+				$vars['survey'] = null;
+				$vars['start'] = false;
+				$vars['reviseExamId'] = null;
+				
+				if ($newest != null) {
+					// Has the patient completed a survey since the last assessment?
+					if ($newest->assessment_total === null) {
+						$vars['survey'] = $newest;
+						
+						// Can the clinician start a new assessment
+						if ($newest->survey_total !== 0) {
+							$vars['start'] = true;
+						}
 					}
-				} else {
 					
+					// Can the clinician revise the latest assessment?
+					if ($newest->assessment_total !== null) {
+						$vars['reviseExamId'] = $newest->id;
+					}
 				}
 			}
 		}
@@ -132,16 +149,121 @@ class StaffController extends BaseController {
 		
 		// Redirect back to the form if validation fails
 		if ($validator->fails()) {
-			return Redirect::to('/')->withErrors($validator)->withInput(Input::all());
+			return Redirect::route('dashboard')->withErrors($validator)->withInput(Input::all());
 		} else {
 			$unique_id = Input::get('unique_id');
 			$patient = Patient::find($unique_id);
 			if (!empty($patient)) {
 				Session::put('patient', $unique_id);
-				return Redirect::to('/')->withInput(Input::all());
+				return Redirect::route('dashboard');
 			} else {
-				return Redirect::to('/')->withErrors(array('failedIdMatch' => 'Patient ' . $unique_id . ' cannot be selected. No such patient exists in the database.'))->withInput(Input::all());
+				return Redirect::route('dashboard')->withErrors(array('failedIdMatch' => 'Patient ' . $unique_id . ' cannot be selected. No such patient exists in the database.'))->withInput(Input::all());
 			}
+		}
+	}
+	
+	// Show clinician assessment
+	public function showAssessment() {
+		$results = Session::get('results');
+		if ($results != '') { // Show the results page
+			return View::make('staff-assessment-results', array(
+				'title'		=> 'Assessment Results',
+				'questions'	=> ClinicianAssessment::getQuestions(),
+				'results'	=> $results,
+			));
+		} else { // Show the assessment form
+			$vars = array(
+				'title'			=> 'Assessment',
+				'assessment'	=> null,
+			);
+			
+			// Redirect to dashboard if no patient has been selected
+			$patient = Session::get('patient');
+			if ($patient == null) {
+				return Redirect::route('dashboard');
+			}
+			$patient = Patient::find($patient);
+			
+			// Redirect to dashboard if no exam exists
+			$newest = $patient->exams->first(); // Grab the most recent exam
+			if ($newest == null) {
+				return Redirect::route('dashboard');
+			}
+			
+			if (Route::currentRouteName() == 'assessment.new') {
+				// Redirect to dashboard if clinician cannot start new assessment at this time
+				if ($newest->survey_total === 0 || $newest->assessment_total !== null) {
+					return Redirect::route('dashboard');
+				}
+				$vars['route'] = 'assessment.new';
+			} else {
+				// Redirect to dashboard if clinician cannot revise the latest assessment at this time
+				if ($newest->assessment_total === null) {
+					return Redirect::route('dashboard');
+				}
+				$vars['assessment'] = $newest;
+				$vars['route'] = 'assessment.revise';
+			}
+			$vars['questions'] = ClinicianAssessment::getQuestions();
+			$vars['choices'] = ClinicianAssessment::getChoices();
+			return View::make('staff-assessment', $vars);
+		}
+	}
+	
+	// Handle clinician assessment
+	public function handleAssessment() {
+		// Redirect to dashboard if no patient has been selected
+		$patient = Session::get('patient');
+		if ($patient == null) {
+			return Redirect::route('dashboard');
+		}
+		$patient = Patient::find($patient);
+		
+		$questions = ClinicianAssessment::getQuestions();
+		$route = Route::currentRouteName();
+		
+		// Form validation
+		$rules = array();
+		for ($i = 0; $i < count($questions); $i++) {
+			$rules['assessment_q' . $i] = 'required';
+		}
+		$validator = Validator::make(Input::all(), $rules);
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::route($route)->withErrors($validator)->withInput(Input::all());
+		} else {
+			$fields = array();
+			$allInput = Input::all();
+			$total = 0;
+			for ($i = 0; $i < count($questions); $i++) {
+				$fields['assessment_q' . $i] = $allInput['assessment_q' . $i];
+				if ($i != 3 && $allInput['assessment_q' . $i] != 99) {
+					$total += $allInput['assessment_q' . $i];
+				}
+			}
+			$fields['assessment_total'] = $total;
+			
+			// Redirect to dashboard if no exam exists
+			$newest = $patient->exams->first(); // Grab the most recent exam
+			if ($newest == null) {
+				return Redirect::route('dashboard');
+			}
+			
+			if ($route == 'assessment.new') {
+				// Redirect to dashboard if clinician cannot start new assessment at this time
+				if ($newest->survey_total === 0 || $newest->assessment_total !== null) {
+					return Redirect::route('dashboard');
+				}
+			} else {
+				// Redirect to dashboard if clinician cannot revise the latest assessment at this time
+				if ($newest->assessment_total === null) {
+					return Redirect::route('dashboard');
+				}
+			}
+			$exam = Exam::find($newest->id);
+			$exam->update($fields);
+			return Redirect::route($route)->with('results', $fields);
 		}
 	}
 	

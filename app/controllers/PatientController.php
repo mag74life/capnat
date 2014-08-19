@@ -109,13 +109,13 @@ class PatientController extends BaseController {
 			if (Route::currentRouteName() == 'survey.new') {
 				// Redirect to dashboard if patient cannot start new survey at this time
 				if ($newest != null && $newest->survey_total != 0 && $newest->assessment_total == null) {
-					return Redirect::to('/');
+					return Redirect::route('dashboard');
 				}
 				$vars['route'] = 'survey.new';
 			} else {
 				// Redirect to dashboard if patient cannot revise the latest survey at this time
 				if ($newest == null || $newest->assessment_total != null) {
-					return Redirect::to('/');
+					return Redirect::route('dashboard');
 				}
 				$vars['exam'] = $newest;
 				$vars['route'] = 'survey.revise';
@@ -126,9 +126,10 @@ class PatientController extends BaseController {
 		}
 	}
 	
-	// Handle new patient survey
+	// Handle patient survey
 	public function handleSurvey() {
 		$questions = PatientSurvey::getQuestions();
+		$route = Route::currentRouteName();
 		
 		// Form validation
 		$rules = array();
@@ -139,7 +140,7 @@ class PatientController extends BaseController {
 		
 		// Redirect back to the form if validation fails
 		if ($validator->fails()) {
-			return Redirect::to('survey')->withErrors($validator)->withInput(Input::all());
+			return Redirect::route($route)->withErrors($validator)->withInput(Input::all());
 		} else {
 			$fields = array();
 			$scaleTotals = array(0, 0, 0);
@@ -156,10 +157,10 @@ class PatientController extends BaseController {
 			$fields['survey_total'] = $surveyTotal;
 			$user = Auth::user();
 			$newest = $user->userData->exams->first(); // Grab the most recent survey
-			if (Route::currentRouteName() == 'survey.new') {
+			if ($route == 'survey.new') {
 				// Redirect to dashboard if patient cannot start new survey at this time
 				if ($newest != null && $newest->survey_total != 0 && $newest->assessment_total == null) {
-					return Redirect::to('/');
+					return Redirect::route('dashboard');
 				}
 				$exam = new Exam($fields);
 				$patient = Auth::user()->userData;
@@ -167,12 +168,12 @@ class PatientController extends BaseController {
 			} else {
 				// Redirect to dashboard if patient cannot revise the latest survey at this time
 				if ($newest == null || $newest->assessment_total != null) {
-					return Redirect::to('/');
+					return Redirect::route('dashboard');
 				}
 				$exam = Exam::find($newest->id);
 				$exam->update($fields);
 			}
-			return Redirect::to('survey')->with('results', $fields);
+			return Redirect::route($route)->with('results', $fields);
 		}
 	}
 	

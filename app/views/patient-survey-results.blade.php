@@ -13,9 +13,9 @@
 	<h1>Survey Results</h1>
 	
 	<table>
-		@for ($i = 0; $i < Config::get('app.surveyLength'); $i++)
+		@for ($i = 0; $i < count($questions); $i++)
 			<tr>
-				<td>{{ $questions[$i]->question }}</td>
+				<td>{{ $questions[$i]['question'] }}</td>
 				<td>{{ $results['survey_q' . $i] }}</td>
 			</tr>
 		@endfor

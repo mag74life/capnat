@@ -15,7 +15,7 @@ class UserSeeder extends Seeder {
 		$user = User::create(array(
 			'unique_id'		=> '1',
 			'type'			=> '0',
-			'password'		=> Hash::make('roygbiv'),
+			'password'		=> Hash::make('capnat'),
 		));
 		$patient = new Patient(array(
 			'name'			=> 'John Smith',
@@ -27,14 +27,44 @@ class UserSeeder extends Seeder {
 		));
 		$user->userData()->save($patient);
 		
-		// Create one clinician
+		// Create a clinician for each role
 		$user = User::create(array(
-			'unique_id'		=> 'eagard',
+			'unique_id'		=> 'staff0',
 			'type'			=> '1',
 			'password'		=> Hash::make('capnat'),
 		));
 		$staff = new Staff(array(
 			'role'			=> '0',
+		));
+		$user->userData()->save($staff);
+		
+		$user = User::create(array(
+			'unique_id'		=> 'staff1',
+			'type'			=> '1',
+			'password'		=> Hash::make('capnat'),
+		));
+		$staff = new Staff(array(
+			'role'			=> '1',
+		));
+		$user->userData()->save($staff);
+		
+		$user = User::create(array(
+			'unique_id'		=> 'staff2',
+			'type'			=> '1',
+			'password'		=> Hash::make('capnat'),
+		));
+		$staff = new Staff(array(
+			'role'			=> '2',
+		));
+		$user->userData()->save($staff);
+		
+		$user = User::create(array(
+			'unique_id'		=> 'staff3',
+			'type'			=> '1',
+			'password'		=> Hash::make('capnat'),
+		));
+		$staff = new Staff(array(
+			'role'			=> '3',
 		));
 		$user->userData()->save($staff);
 	}

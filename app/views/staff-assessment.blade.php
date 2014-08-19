@@ -12,7 +12,7 @@
 
 	<h1>Assessment</h1>
 	
-	{{ Form::model($exam, array('route' => 'assessment')) }}
+	{{ Form::model($assessment, array('route' => $route)) }}
 		<ul>
 			@foreach($errors->all() as $error)
 				<li>{{ $error }}</li>
@@ -21,28 +21,29 @@
 		
 		<ul>
 			<li>
-				<p>Tingling</p>
+				<p>{{ $questions[0] }}</p>
 				{{ Form::radioGroup('assessment_q0', $choices[0], array('required')) }}
 			</li>
 			<li>
-				<p>Numbness</p>
+				<p>{{ $questions[1] }}</p>
 				{{ Form::radioGroup('assessment_q1', $choices[1], array('required')) }}
 			</li>
 			<li>
-				<p>Neuropathic pain (burning, shooting, aching, stabbing)</p>
+				<p>{{ $questions[2] }}</p>
 				{{ Form::radioGroup('assessment_q2', $choices[2], array('required')) }}
 			</li>
 			<li>
-				<p>Rate your neuropathic pain (0 = No pain, 10 = Pain as bad as you can imagine)</p>
-				{{ Form::select('assessment_q3', array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), array('required')) }}
+				<p>{{ $questions[3] }}</p>
+				{{ Form::select('assessment_q3', $choices[3], array('required')) }}
 			</li>
-		
-			@for ($i = 0; $i < count($questions); $i++)
-				<li>
-					<p>{{ $questions[$i]['question'] }}</p>
-					{{ Form::radioGroup('survey_q' . $i, $choices, array('required')) }}
-				</li>
-			@endfor
+			<li>
+				<p>{{ $questions[4] }}</p>
+				{{ Form::radioGroup('assessment_q4', $choices[4], array('required')) }}
+			</li>
+			<li>
+				<p>{{ $questions[5] }}</p>
+				{{ Form::radioGroup('assessment_q5', $choices[5], array('required')) }}
+			</li>
 			<li>
 				{{ Form::submit('Submit') }}
 			</li>

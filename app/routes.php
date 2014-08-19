@@ -23,7 +23,7 @@ if (Auth::guest()) { // Show login page if user is not logged in
 } else { // Show staff dashboard
 	$dashboard = 'StaffController@showDashboard';
 }
-Route::get('/', $dashboard);
+Route::get('/', array('as' => 'dashboard', 'uses' => $dashboard));
 
 // Patient
 Route::get('login', 'PatientController@showLogin');
@@ -36,6 +36,10 @@ Route::post('survey/revise', array('as' => 'survey.revise', 'uses' => 'PatientCo
 
 // Staff
 Route::post('clinician', 'StaffController@handleClinicianDashboard');
+Route::get('assessment', array('as' => 'assessment.new', 'uses' => 'StaffController@showAssessment'));
+Route::post('assessment', array('as' => 'assessment.new', 'uses' => 'StaffController@handleAssessment'));
+Route::get('assessment/revise', array('as' => 'assessment.revise', 'uses' => 'StaffController@showAssessment'));
+Route::post('assessment/revise', array('as' => 'assessment.revise', 'uses' => 'StaffController@handleAssessment'));
 Route::get('staff-login', 'StaffController@showLogin');
 Route::post('staff-login', 'StaffController@handleLogin');
 Route::any('staff-logout', 'StaffController@handleLogout');
