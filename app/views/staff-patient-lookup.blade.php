@@ -52,6 +52,7 @@
 		</ul>
 	{{ Form::close() }}
 	
+	<?php $results = Session::get('results'); ?>
 	@if (!empty($results))
 		@if (!$results->isEmpty())
 			<h2>Search Results</h2>
@@ -65,6 +66,7 @@
 					<th>Race</th>
 					<th>Ethnicity</th>
 				</tr>
+				
 				@foreach ($results as $row)
 					<tr>
 						<td>{{ $row->id }}</td>
