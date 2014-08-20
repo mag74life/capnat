@@ -7,8 +7,12 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Remove Patient</li>
+		</ul>
+	</nav>
 
 	<h1>Remove Patient</h1>
 	
@@ -19,12 +23,12 @@
 			@endforeach
 		</ul>
 		
-		<ul>
+		<ul class="form-fields">
 			<li>
-				{{ Form::label('unique_id', 'Patient ID') }}
-				{{ Form::text('unique_id', null, array('required', 'maxlength' => '10', 'pattern' => '\d+')) }}
+				{{ Form::label('unique_id', 'Patient ID', array('class' => 'field-label-side')) }}
+				{{ Form::text('unique_id', null, array('class' => 'textfield-mini', 'required', 'maxlength' => '10', 'pattern' => '\d+')) }}
 			</li>
-			<li>
+			<li class="button-side">
 				{{ Form::submit('Submit') }}
 			</li>
 		</ul>

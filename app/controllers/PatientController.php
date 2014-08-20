@@ -46,6 +46,7 @@ class PatientController extends BaseController {
 			);
 			
 			if (Auth::attempt($userdata)) {
+				Session::put('userRole', 0);
 				return Redirect::intended('/');
 			} else {
 				return Redirect::to('login')->withErrors(array('failedAuth' => 'The ID or password you entered is incorrect.'))->withInput(Input::except('password'));

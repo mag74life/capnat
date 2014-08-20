@@ -7,6 +7,8 @@
 @stop
 
 @section('content')
+	<p>Staff, enter your UMICH uniquename to log in.</p>
+	
 	{{ Form::open(array('url' => 'staff-login')) }}
 		<ul>
 			@foreach($errors->all() as $error)
@@ -14,20 +16,20 @@
 			@endforeach
 		</ul>
 		
-		<ul>
+		<ul class="form-fields">
 			<li>
-				{{-- Form::label('unique_id', 'Uniquename') --}}
-				{{ Form::text('unique_id', null, array('placeholder' => 'Uniquename')) }}
+				{{ Form::text('unique_id', null, array('class' => 'textfield-short', 'placeholder' => 'Uniquename')) }}
 			</li>
 			<li>
-				{{-- Form::label('password', 'Password') --}}
-				{{ Form::password('password', array('placeholder' => 'Password')) }}
+				{{ Form::password('password', array('class' => 'textfield-short', 'placeholder' => 'Password')) }}
 			</li>
 			<li>
 				{{ Form::submit('Log in') }}
 			</li>
 		</ul>
 	{{ Form::close() }}
+@stop
 
-	<p><a href="{{ URL::to('login') }}">Patient Login</a></p>
+@section('footer')
+	<div id="footer-login"><a href="{{ URL::to('login') }}">patient login</a></div>
 @stop

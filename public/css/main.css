@@ -1,33 +1,16 @@
-/*! HTML5 Boilerplate v4.3.0 | MIT License | http://h5bp.com/ */
-
-/*
- * What follows is the result of much research on cross-browser styling.
- * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
- * Kroc Camen, and the H5BP dev community and team.
- */
-
-/* ==========================================================================
-   Base styles: opinionated defaults
-   ========================================================================== */
-
 html,
 button,
 input,
 select,
 textarea {
-    color: #222;
+	font-family: Arial, sans-serif;
+    color: #444;
 }
 
 html {
     font-size: 1em;
     line-height: 1.4;
 }
-
-/*
- * Remove text-shadow in selection highlight: h5bp.com/i
- * These selection rule sets have to be separate.
- * Customize the background color to match your design.
- */
 
 ::-moz-selection {
     background: #b3d4fc;
@@ -39,24 +22,6 @@ html {
     text-shadow: none;
 }
 
-/*
- * A better looking default horizontal rule
- */
-
-hr {
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 1em 0;
-    padding: 0;
-}
-
-/*
- * Remove the gap between images, videos, audio and canvas and the bottom of
- * their containers: h5bp.com/i/440
- */
-
 audio,
 canvas,
 img,
@@ -64,27 +29,20 @@ video {
     vertical-align: middle;
 }
 
-/*
- * Remove default fieldset styles.
- */
-
 fieldset {
     border: 0;
     margin: 0;
     padding: 0;
 }
 
-/*
- * Allow only vertical resizing of textareas.
- */
-
 textarea {
     resize: vertical;
 }
 
-/* ==========================================================================
-   Browse Happy prompt
-   ========================================================================== */
+body {
+	margin: 0;
+	background-color: #415863;
+}
 
 .browsehappy {
     margin: 0.2em 0;
@@ -93,25 +51,302 @@ textarea {
     padding: 0.2em 0;
 }
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
+h1,
+h2,
+h3 {
+	margin: 0;
+	font-family: "Trebuchet MS", Arial, sans-serif;
+	font-weight: normal;
+}
 
+p {
+	margin: 16px 0;
+}
 
+a {
+	color: #ac0015;
+	text-decoration: none;
+}
 
+a:hover {
+	text-decoration: underline;
+}
 
+#page {
+	margin: 0 auto;
+	width: 800px;
+}
 
+#header {
+	position: relative;
+}
 
+#header h1 {
+	margin: 0;
+	margin-top: 12px;
+	padding-left: 32px;
+	font-size: 50px;
+	line-height: 1;
+	letter-spacing: 0.1em;
+	color: #90aebc;
+}
 
+#logout {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	margin-right: 30px;
+}
 
+#logout a {
+	font-size: 14px;
+	line-height: 46px;
+	color: #fff;
+}
 
+#content {
+	border-width: 3px 3px 0 3px;
+	border-style: solid;
+	border-color: #5f7f93;
+	border-radius: 18px;
+	padding: 13px;
+	background-color: #e8e5d7;
+	box-shadow: 0px 12px 0px 0px rgba(95, 127, 147, 1);
+}
 
+#content nav ul {
+	margin: 0;
+	margin-bottom: 16px;
+	border-bottom: 1px solid #d8d5c9;
+	padding: 0;
+	font-size: 14px;
+	color: #75715f;
+}
 
+#content nav li {
+	display: inline;
+}
 
+#content nav li + li:before {
+	content: "» ";
+	color: #a19d8d;
+}
 
+#content h1 {
+	font-size: 32px;
+}
 
+#content h2 {
+	font-size: 24px;
+}
 
+#footer {
+	padding: 32px;
+}
 
+#footer a {
+	font-size: 14px;
+	color: #90aebc;
+}
+
+#footer-login {
+	text-align: right;
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+	outline: none;
+	margin-bottom: 12px;
+	border: 1px solid #d8d5c9;
+	border-radius: 4px;
+	padding: 2px 4px;
+	height: 26px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: #666;
+	background-color: #fff;
+	box-shadow: inset 0px 1px 4px #ececec;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+	border-color: #5997bd;
+}
+
+form textarea {
+	height: 96px;
+}
+
+a.button-link,
+.button-list li a,
+input[type="submit"] {
+	outline: none;
+	cursor: pointer;
+	border: 0 solid transparent;
+	border-radius: 4px;
+	padding: 6px 24px;
+	font-size: 14px;
+	line-height: 1.4;
+	text-decoration: none;
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	background-color: #a1bb4a;
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.25);
+}
+
+a.button-link:hover,
+.button-list li a:hover,
+input[type="submit"]:hover {
+	background-color: #adcd41;
+}
+
+a.button-link:active,
+.button-list li a:active,
+input[type="submit"]:active {
+	position: relative;
+	top: 1px;
+	background-color: #a1bb4a;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.form-fields,
+.form-fields ul,
+.form-fields ol {
+	margin: 0;
+	margin-bottom: 16px;
+	padding: 0;
+	list-style: none;
+}
+
+.form-fields ul,
+.form-fields ol {
+	margin-left: 16px;
+}
+
+.form-fields li {
+	clear: left;
+}
+
+.textfield-mini {
+	width: 16%;
+}
+
+.textfield-short {
+	width: 33%;
+}
+
+.textfield-medium {
+	width: 66%;
+}
+
+.field-label {
+	display: block;
+	margin-bottom: 4px;
+}
+
+.field-label-side {
+	float: left;
+	margin-bottom: 12px;
+	margin-right: 12px;
+	padding-top: 5px;
+	width: 13%;
+	text-align: right;
+}
+
+.button-side {
+	padding-left: 13%;
+}
+
+.button-side input {
+	margin-left: 12px;
+}
+
+.field-desc {
+	margin-bottom: 4px;
+}
+
+table {
+	margin: 8px 0;
+}
+
+table th {
+	text-align: center;
+	background-color: #c3bea9;
+}
+
+table th,
+table td {
+	border: 1px solid #75715f;
+	padding: 2px 5px;
+}
+
+table tr:nth-child(even) td {
+	background-color: #efede5;
+}
+
+table td.total {
+	font-weight: bold;
+}
+
+.no-border {
+	border: none !important;
+}
+
+.no-background {
+	background: none !important;
+}
+
+.align-right {
+	text-align: right;
+}
+
+.align-center {
+	text-align: center;
+}
+
+.float-left {
+	overflow: hidden;
+	float: left;
+}
+
+.float-right {
+	overflow: hidden;
+	float: right;
+}
+
+.text-mono {
+	font-family: monospace !important;
+}
+
+.button-list {
+	margin: 0 auto;
+	margin-bottom: 16px;
+	padding: 0;
+	width: 33%;
+	list-style: none;
+}
+
+.button-list li {
+	margin-bottom: 6px;
+}
+
+.button-list li a {
+	display: block;
+	text-align: center;
+	background-color: #a38d6d;
+}
+
+.button-list li a:hover {
+	background-color: #b89f7b;
+}
+
+.button-list li a:active {
+	background-color: #a38d6d;
+}
 
 /* ==========================================================================
    Helper classes

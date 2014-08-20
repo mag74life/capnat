@@ -7,8 +7,12 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Add Patient</li>
+		</ul>
+	</nav>
 
 	<h1>Add Patient</h1>
 	
@@ -19,14 +23,14 @@
 			@endforeach
 		</ul>
 		
-		<ul>
+		<ul class="form-fields">
 			<li>
-				{{ Form::label('name', 'Name') }}
-				{{ Form::text('name', null, array('required', 'maxlength' => '60')) }}
+				{{ Form::label('name', 'Name', array('class' => 'field-label')) }}
+				{{ Form::text('name', null, array('class' => 'textfield-medium', 'required', 'maxlength' => '60')) }}
 			</li>
 			<li>
-				{{ Form::label('dob', 'Date of Birth') }}
-				{{ Form::text('dob', null, array('required', 'pattern' => '\d{1,2}/\d{1,2}/\d{4}', 'maxlength' => '10', 'placeholder' => 'MM/DD/YYYY')) }}
+				{{ Form::label('dob', 'Date of Birth', array('class' => 'field-label')) }}
+				{{ Form::text('dob', null, array('class' => 'textfield-mini', 'required', 'pattern' => '\d{1,2}/\d{1,2}/\d{4}', 'maxlength' => '10', 'placeholder' => 'MM/DD/YYYY')) }}
 			</li>
 			<li>
 				<div>Gender</div>

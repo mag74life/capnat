@@ -7,19 +7,23 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Add Patient</li>
+		</ul>
+	</nav>
 	
 	<h1>Patient Added</h1>
 	
-	<table border="1">
+	<table>
 		<tr>
 			<th>Patient ID</th>
 			<th>Password</th>
 		</tr>
 		<tr>
-			<td>{{ $unique_id }}</td>
-			<td>{{ $password }}</td>
+			<td class="text-mono">{{ $unique_id }}</td>
+			<td class="text-mono">{{ $password }}</td>
 		</tr>
 	</table>
 	

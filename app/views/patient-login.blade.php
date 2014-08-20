@@ -16,20 +16,20 @@
 			@endforeach
 		</ul>
 		
-		<ul>
+		<ul class="form-fields">
 			<li>
-				{{-- Form::label('unique_id', 'Patient ID') --}}
-				{{ Form::text('unique_id', null, array('maxlength' => '10', 'placeholder' => 'Patient ID')) }}
+				{{ Form::text('unique_id', null, array('class' => 'textfield-short', 'maxlength' => '10', 'placeholder' => 'Patient ID')) }}
 			</li>
 			<li>
-				{{-- Form::label('password', 'Password') --}}
-				{{ Form::password('password', array('placeholder' => 'Password')) }}
+				{{ Form::password('password', array('class' => 'textfield-short', 'placeholder' => 'Password')) }}
 			</li>
 			<li>
 				{{ Form::submit('Log in') }}
 			</li>
 		</ul>
 	{{ Form::close() }}
+@stop
 
-	<p><a href="{{ URL::to('staff-login') }}">Staff Login</a></p>
+@section('footer')
+	<div id="footer-login"><a href="{{ URL::to('staff-login') }}">staff login</a></div>
 @stop

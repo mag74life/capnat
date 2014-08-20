@@ -7,8 +7,12 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Remove Research Staff</li>
+		</ul>
+	</nav>
 	
 	<h1>Research Staff Removed</h1>
 	

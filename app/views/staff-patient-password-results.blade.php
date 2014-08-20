@@ -7,21 +7,25 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Reset Patient Password</li>
+		</ul>
+	</nav>
 	
 	<h1>Password Reset</h1>
 	
 	<p>The password for patient {{ $unique_id }} has been reset.</p>
 	
-	<table border="1">
+	<table>
 		<tr>
 			<th>Patient ID</th>
 			<th>Password</th>
 		</tr>
 		<tr>
-			<td>{{ $unique_id }}</td>
-			<td>{{ $password }}</td>
+			<td class="text-mono">{{ $unique_id }}</td>
+			<td class="text-mono">{{ $password }}</td>
 		</tr>
 	</table>
 	

@@ -7,8 +7,12 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('staff-logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Assessment</li>
+		</ul>
+	</nav>
 
 	<h1>Assessment Results</h1>
 	
@@ -20,8 +24,8 @@
 			</tr>
 		@endfor
 		<tr>
-			<td style="text-align: right;">Total:</td>
-			<td>{{ $results['assessment_total'] }}</td>
+			<td class="total align-right">Total:</td>
+			<td class="total">{{ $results['assessment_total'] }}</td>
 		</tr>
 	</table>
 	

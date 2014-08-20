@@ -59,8 +59,7 @@ Route::get('remove-staff', 'StaffController@showRemoveStaff');
 Route::post('remove-staff', 'StaffController@handleRemoveStaff');
 Route::get('patient-lookup', 'StaffController@showPatientLookup');
 Route::post('patient-lookup', 'StaffController@handlePatientLookup');
-
-
-
-
-Route::get('view-patients', 'StaffController@showViewPatients');
+Route::get('research', 'StaffController@showResearch');
+Route::post('research', 'StaffController@handleResearch');
+Route::get('patient/{id}', 'StaffController@showPatient');
+Route::get('exam/{id}', 'StaffController@showExam');

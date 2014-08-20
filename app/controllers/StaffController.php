@@ -55,8 +55,10 @@ class StaffController extends BaseController {
 		// Only head researcher can access
 		$this->beforeFilter('staff3', array(
 			'only' => array(
-				'showResearchData',
-				'handleResearchData',
+				'showResearch',
+				'handleResearch',
+				'showPatient',
+				'showExam',
 			),
 		));
 	}
@@ -87,6 +89,7 @@ class StaffController extends BaseController {
 			);
 			
 			if (Auth::attempt($userdata)) {
+				Session::put('userRole', 1);
 				return Redirect::intended('/');
 			} else {
 				return Redirect::to('staff-login')->withErrors(array('failedAuth' => 'The uniquename or password you entered is incorrect.'))->withInput(Input::except('password'));
@@ -630,17 +633,91 @@ class StaffController extends BaseController {
 		}
 	}
 	
-	// Show patient data
-	public function showViewPatients() {
-		$patients = Patient::orderBy('name', 'asc')->get();
-		foreach ($patients as $patient) {
-			$exams = $patient->exams;
-			$patient['exams'] = $exams;
+	// Show research data
+	public function showResearch() {
+		$results = Session::get('results');
+		return View::make('staff-research', array(
+			'title'				=> 'Research Data',
+			'genderOptions'		=> array('' => '') + PatientDemographics::getOptions('gender'),
+			'raceOptions'		=> array('' => '') + PatientDemographics::getOptions('race'),
+			'ethnicityOptions'	=> array('' => '') + PatientDemographics::getOptions('ethnicity'),
+			'educationOptions'	=> array('' => '') + PatientDemographics::getOptions('education'),
+			'results'			=> $results,
+		));
+	}
+	
+	// Handle research data
+	public function handleResearch() {
+		// Form validation
+		$validator = Validator::make(Input::all(), array(
+			'unique_id'		=> 'numeric',
+			'dob'			=> 'date',
+		));
+		
+		// Redirect back to the form if validation fails
+		if ($validator->fails()) {
+			return Redirect::to('research')->withErrors($validator)->withInput(Input::all());
+		} else {
+			if (Input::get('unique_id') != '') {
+				$results = new Illuminate\Database\Eloquent\Collection;
+				$patient = Patient::find(Input::get('unique_id'));
+				if ($patient) {
+					$results->add($patient);
+				}
+			} else {
+				$results = Patient::where(function ($query) {
+					if (Input::get('name') != '') {
+						$name = '%' . preg_replace('/[^a-z]*([a-z]+)[^a-z]*/i', '$1%', Input::get('name'));
+						$query->where('name', 'like', $name);
+					}
+					if (Input::get('dob') != '') {
+						$query->where('dob', '=', date('Y-m-d', strtotime(Input::get('dob'))));
+					}
+					if (Input::get('gender')  != '') {
+						$query->where('gender', '=', Input::get('gender'));
+					}
+					if (Input::get('race')  != '') {
+						$query->where('race', '=', Input::get('race'));
+					}
+					if (Input::get('ethnicity')  != '') {
+						$query->where('ethnicity', '=', Input::get('ethnicity'));
+					}
+					if (Input::get('education')  != '') {
+						$query->where('education', '=', Input::get('education'));
+					}
+				})->get();
+			}
+			return Redirect::to('research')->with('results', $results)->withInput(Input::all());
 		}
-		return View::make('staff-view-patients', array(
+	}
+	
+	// Show patient data
+	public function showPatient($id) {
+		$patient = Patient::find($id);
+		if (!$patient) {
+			return Redirect::to('research');
+		}
+		return View::make('staff-patient', array(
 			'title'		=> 'Patient Data',
-			'patients'	=> $patients,
-		));	
+			'patient'	=> $patient,
+		));
+	}
+	
+	// Show exam data
+	public function showExam($id) {
+		$exam = Exam::find($id);
+		if (!$exam) {
+			return Redirect::to('research');
+		}
+		$patient = $exam->patient;
+		return View::make('staff-exam', array(
+			'title'			=> 'Exam Data',
+			'patientId'		=> $patient->id,
+			'patientName'	=> $patient->name,
+			'exam'			=> $exam,
+			'survey'		=> PatientSurvey::getQuestions(),
+			'assessment'	=> ClinicianAssessment::getQuestions(),
+		));
 	}
 	
 	// Generate patient password

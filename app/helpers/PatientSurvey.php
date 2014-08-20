@@ -22,8 +22,8 @@ class PatientSurvey {
 		array('question' => 'Were you dizzy when standing up from a sitting or lying position?', 'scale' => 2),
 		array('question' => 'Did you have blurred vision?', 'scale' => 2),
 		array('question' => 'Did you have difficulty hearing?', 'scale' => 0),
-		array('question' => 'Please answer the following question only if you drive a car. Did you have difficulty using pedals?', 'scale' => 1),
-		array('question' => 'Please answer the following question only if you are a man. Did you have difficulty getting or maintaining an erection?', 'scale' => 2),
+		array('question' => 'Did you have difficulty using the pedals in your car? Please answer "not at all" if you do not drive a car.', 'scale' => 1),
+		array('question' => 'Did you have difficulty getting or maintaining an erection? Please answer "not at all" if this does not pertain to you.', 'scale' => 2),
 	);
 	
 	// Choices

@@ -7,8 +7,12 @@
 @stop
 
 @section('content')
-	<p><a href="{{ URL::to('logout') }}">Log out</a></p>
-	<p><a href="{{ URL::to('/') }}">Dashboard</a></p>
+	<nav>
+		<ul>
+			<li><a href="{{ URL::to('/') }}">Dashboard</a></li>
+			<li>Survey</li>
+		</ul>
+	</nav>
 
 	<h1>Survey</h1>
 	
@@ -19,10 +23,10 @@
 			@endforeach
 		</ul>
 		
-		<ul>
+		<ul class="form-fields">
 			@for ($i = 0; $i < count($questions); $i++)
 				<li>
-					<p>{{ $questions[$i]['question'] }}</p>
+					<div class="field-desc">{{ $questions[$i]['question'] }}</div>
 					{{ Form::radioGroup('survey_q' . $i, $choices, array('required')) }}
 				</li>
 			@endfor
