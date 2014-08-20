@@ -371,11 +371,13 @@ class StaffController extends BaseController {
 	
 	// Show patient lookup
 	public function showPatientLookup() {
+		$results = Session::get('results');
 		return View::make('staff-patient-lookup', array(
 			'title'				=> 'Patient Lookup',
 			'genderOptions'		=> array('' => '') + PatientDemographics::getOptions('gender'),
 			'raceOptions'		=> array('' => '') + PatientDemographics::getOptions('race'),
 			'ethnicityOptions'	=> array('' => '') + PatientDemographics::getOptions('ethnicity'),
+			'results'			=> $results,
 		));
 	}
 	
@@ -408,8 +410,7 @@ class StaffController extends BaseController {
 					$query->where('ethnicity', '=', Input::get('ethnicity'));
 				}
 			})->get();
-			Session::put('results', $results);
-			return Redirect::to('patient-lookup')->withInput(Input::all());
+			return Redirect::to('patient-lookup')->with('results', $results)->withInput(Input::all());
 		}
 	}
 	
